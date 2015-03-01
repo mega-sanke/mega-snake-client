@@ -1,5 +1,7 @@
 package megaSnake;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -26,7 +28,11 @@ public class Networker implements Runnable {
 		reader = new BufferedReader(new InputStreamReader(
 				socket.getInputStream()));
 		this.board = b;
-		sendMassege("vsdvsdbvsd");
+		Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+		int h = screen.height, w = screen.width;
+		int wCount = w / Slot.X_AXIS_SIZE + (w % Slot.X_AXIS_SIZE == 0 ? 0 : 1);
+		int hCount = h / Slot.Y_AXIS_SIZE + (h % Slot.Y_AXIS_SIZE == 0 ? 0 : 1);
+		sendMassege("firstConnect:[" + wCount + "," + hCount + "]");
 		thread.start();
 	}
 
@@ -51,28 +57,29 @@ public class Networker implements Runnable {
 						head = true;
 						board.justadded = true;
 						SnakeLink s = new SnakeLink(g.getX(), g.getY(), head);
-						s.moves.add(Move.valueOf(p[2]));
+						s.addMove(Move.valueOf(p[2]));
 						s.move();
 						board.getSnake().add(s);
-					}else {
-//						SnakeLink h = board.getSnake().get(0);
-//						Queue<Move> q = new LinkedList<Move>(board.getSnake()
-//								.get(board.getSnake().size() - 1).moves);
-//						for (Move m : q) {
-//							s.moves.add(m);
-//						}
-//						SnakeLink h = board.getSnake().get(0);
-//						Queue<Move> q = new LinkedList<Move>(h.moves);
-//						SnakeLink l = new SnakeLink(board.getSnake().get(board.getSnake().size()-1));
-//						l.moves.add(Move.valueOf(p[2]));
-//						l.move();
-//						for (Move m : q) {
-//							l.moves.add(m);
-//						}
+					} else {
+						// SnakeLink h = board.getSnake().get(0);
+						// Queue<Move> q = new LinkedList<Move>(board.getSnake()
+						// .get(board.getSnake().size() - 1).moves);
+						// for (Move m : q) {
+						// s.moves.add(m);
+						// }
+						// SnakeLink h = board.getSnake().get(0);
+						// Queue<Move> q = new LinkedList<Move>(h.moves);
+						// SnakeLink l = new
+						// SnakeLink(board.getSnake().get(board.getSnake().size()-1));
+						// l.moves.add(Move.valueOf(p[2]));
+						// l.move();
+						// for (Move m : q) {
+						// l.moves.add(m);
+						// }
 						board.getSnake().addLink();
 					}
 
-					//s.move();
+					// s.move();
 					board.start();
 					break;
 

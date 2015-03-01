@@ -35,7 +35,7 @@ public class Snake extends ArrayList<SnakeLink> {
 
 	public void addMove(Move m) {
 		for (SnakeLink i : this) {
-			i.moves.add(m);
+			i.addMove(m);
 		}
 	}
 	
@@ -51,10 +51,10 @@ public class Snake extends ArrayList<SnakeLink> {
 	}
 
 	public boolean addLink() {
-		Queue<Move> q = new LinkedList<Move>(get(size()-1).moves);
+		Queue<Move> q = get(size() - 1).cloneMoves();
 		SnakeLink l = new SnakeLink(get(size()-1));
 		for (Move m : q) {
-			l.moves.add(m);
+			l.addMove(m);
 		}
 		return add(l);
 	}

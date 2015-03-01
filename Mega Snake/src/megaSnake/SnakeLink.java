@@ -6,39 +6,55 @@ import java.util.concurrent.LinkedBlockingDeque;
 
 /**
  * A link of the snake
+ * 
  * @author obama
  *
  */
-public class SnakeLink extends Slot{
+public class SnakeLink extends Slot {
 	/**
 	 * a queue of the link
 	 */
-	Queue<Move> moves = new LinkedBlockingDeque<>();
-	Move lastMove;
+	private Queue<Move> moves = new LinkedBlockingDeque<>();
+	private Move lastMove;
 	private final boolean head;
+
 	public SnakeLink(int x, int y, boolean head) {
 		super(x, y);
 		this.head = head;
 		moves.add(Move.STAY);
 	}
+
 	/**
 	 * copy only the position
+	 * 
 	 * @param s
 	 */
 	public SnakeLink(SnakeLink s) {
-		this(s.getX(),s.getY(),false);
+		this(s.getX(), s.getY(), false);
 	}
+	
+	public void addMove(Move m){
+		moves.add(m);
+	}
+	
+	public int getMovesCount(){
+		return moves.size();
+	}
+	
 	public boolean isHead() {
 		return head;
 	}
 	
+	public Queue<Move> cloneMoves(){
+		return new LinkedBlockingDeque<>(moves);
+	}
 	public void move() {
 		lastMove = moves.poll();
-		if(lastMove == null){
+		if (lastMove == null) {
 			return;
 		}
 		switch (lastMove) {
-		
+
 		case UP:
 			y -= Y_AXIS_SIZE;
 			break;
@@ -56,6 +72,9 @@ public class SnakeLink extends Slot{
 		default:
 			break;
 		}
+	}
+	public Move getLastMove(){
+		return lastMove;
 	}
 
 }

@@ -1,12 +1,9 @@
 package megaSnake;
 
-import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.GridLayout;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -16,13 +13,13 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.Delayed;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
+@SuppressWarnings("serial")
 public class Board extends JPanel implements KeyListener, ActionListener {
 
 	private Snake snake;
@@ -129,7 +126,7 @@ public class Board extends JPanel implements KeyListener, ActionListener {
 		System.out.println(snake.size());
 		try{
 		if (snake.size() != 0) {
-			Move thisMove = snake.get(0).moves.peek();
+			Move thisMove = snake.get(0).cloneMoves().peek();
 			Move newMove = Move.getNeg(e.getKeyCode());
 			// if the player want to go against the direction the snake is going
 			if (thisMove == newMove) {
@@ -158,7 +155,7 @@ public class Board extends JPanel implements KeyListener, ActionListener {
 			// last
 			// move of the first link to all the links
 			if (pressed == 0) {
-				snake.addMove(snake.get(0).lastMove);
+				snake.addMove(snake.get(0).getLastMove());
 			}
 			pressed--;
 			if (pressed < 0) {
@@ -191,7 +188,7 @@ public class Board extends JPanel implements KeyListener, ActionListener {
 			Collide c = snake.collided(g);
 			if (c != null) {
 				netWorker.sendMassege("gate:" + g.getCode() + ":"
-						+ snake.get(0).moves.peek());
+						+ snake.get(0).cloneMoves().peek());
 				if (snake.get(0).isHead()) {
 					controller = false;
 				}
@@ -243,7 +240,7 @@ public class Board extends JPanel implements KeyListener, ActionListener {
 			snake.addMove(Move.RIGHT);
 			break;
 		case KeyEvent.VK_SPACE:
-			if (snake.get(0).moves.peek() != Move.STAY) {
+			if (snake.get(0).cloneMoves().peek() != Move.STAY) {
 				snake.addLink();
 				Snake.lowerDelay(t);
 			}
@@ -268,7 +265,7 @@ public class Board extends JPanel implements KeyListener, ActionListener {
 	public void paint(Graphics g) {
 		super.paint(g);
 		g.clearRect(0, 0, getWidth(), getHeight());
-		//drawGrid(g);
+		drawGrid(g);
 		/*
 		 * if(!connection.isConrtroller()){ frame.setOpacity(0.7f); } else {
 		 * frame.setOpacity(1.0f); }
