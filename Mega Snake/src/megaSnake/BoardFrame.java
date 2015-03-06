@@ -10,7 +10,7 @@ public class BoardFrame extends JFrame {
 	
 	public BoardFrame(Board b){
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-		dim.setSize(dim.getWidth(), dim.getHeight());
+		dim.setSize(dim.getWidth() / 2, dim.getHeight());
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLocation(0, 0);
 		this.setSize(dim);

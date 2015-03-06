@@ -21,7 +21,7 @@ public class Snake extends ArrayList<SnakeLink> {
 
 	public Snake() {
 		alive = true;
-		add(new SnakeLink(Slot.X_AXIS_SIZE ,Slot.Y_AXIS_SIZE , true));
+		//add(new SnakeLink(Slot.X_AXIS_SIZE ,Slot.Y_AXIS_SIZE , true));
 	}
 	
 	public SnakeLink getSnakeLinkOn(Slot l) {

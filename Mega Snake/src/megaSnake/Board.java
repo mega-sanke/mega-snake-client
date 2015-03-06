@@ -336,14 +336,14 @@ public class Board extends JPanel implements KeyListener, ActionListener {
 	}
 
 	public List<Block> putBorders() {
-		Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+		Dimension screen = getBoardSize();
 		int h = screen.height, w = screen.width;
 		int wCount = w / Slot.X_AXIS_SIZE + (w % Slot.X_AXIS_SIZE == 0 ? 0 : 1);
 		int hCount = h / Slot.Y_AXIS_SIZE + (h % Slot.Y_AXIS_SIZE == 0 ? 0 : 1);
 		ArrayList<Block> blocks = new ArrayList<Block>();
 		for (int i = 0; i < wCount; i++) {
 			blocks.add(new Block(i * Slot.X_AXIS_SIZE, 0));
-			blocks.add(new Block(i * Slot.X_AXIS_SIZE, (hCount - 2)
+			blocks.add(new Block(i * Slot.X_AXIS_SIZE, (hCount - 3)
 					* Slot.Y_AXIS_SIZE));
 		}
 		for (int i = 1; i < hCount - 1; i++) {
@@ -353,9 +353,19 @@ public class Board extends JPanel implements KeyListener, ActionListener {
 		}
 		return blocks;
 	}
-
+	
+	public void addGates(int gates, Winds w){
+		w.conquer();
+		
+	}
+	
 	public void start() {
 		controller = true;
 
 	}
+
+	public Dimension getBoardSize(){
+		return frame.getSize();
+	}
+	
 }

@@ -28,7 +28,7 @@ public class Networker implements Runnable {
 		reader = new BufferedReader(new InputStreamReader(
 				socket.getInputStream()));
 		this.board = b;
-		Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+		Dimension screen = board.getBoardSize();
 		int h = screen.height, w = screen.width;
 		int wCount = w / Slot.X_AXIS_SIZE + (w % Slot.X_AXIS_SIZE == 0 ? 0 : 1);
 		int hCount = h / Slot.Y_AXIS_SIZE + (h % Slot.Y_AXIS_SIZE == 0 ? 0 : 1);
@@ -88,7 +88,7 @@ public class Networker implements Runnable {
 			break;
 		case START:
 			board.controller = true;
-			board.getSnake().add(new SnakeLink(0, 0, true));
+			board.getSnake().add(new SnakeLink(Slot.X_AXIS_SIZE, Slot.Y_AXIS_SIZE, true));
 			System.out.println("con");
 			break;
 		}
