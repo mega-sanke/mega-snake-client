@@ -19,7 +19,7 @@ public class Networker implements Runnable {
 	private Thread thread = new Thread(this);
 	int id;
 	public static final String DEAD = "dead", OK = "ok", GATE = "gate",
-			START = "start", ID = "id";
+			START = "start", ID = "id", FIRST_CONNECT="firstConnect";
 
 	public Networker(Board b, String ip, int port) throws UnknownHostException,
 			IOException {
@@ -32,7 +32,7 @@ public class Networker implements Runnable {
 		int h = screen.height, w = screen.width;
 		int wCount = w / Slot.X_AXIS_SIZE + (w % Slot.X_AXIS_SIZE == 0 ? 0 : 1);
 		int hCount = h / Slot.Y_AXIS_SIZE + (h % Slot.Y_AXIS_SIZE == 0 ? 0 : 1);
-		sendMassege("firstConnect:[" + wCount + "," + hCount + "]");
+		sendMassege(FIRST_CONNECT + ":[" + wCount + "," + hCount + "]");
 		thread.start();
 	}
 

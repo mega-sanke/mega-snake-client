@@ -1,9 +1,11 @@
 package megaSnake;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -35,7 +37,7 @@ public class Board extends JPanel implements KeyListener, ActionListener {
 	 * true if the player has been done an action, false else.
 	 */
 
-	Timer t = new Timer(Snake.DELAY, this);
+	private Timer t = new Timer(Snake.DELAY, this);
 	public List<Block> blocks = new ArrayList<Block>();
 	public List<Gate> gates = new ArrayList<Gate>();
 	public boolean justadded = false;
@@ -50,38 +52,31 @@ public class Board extends JPanel implements KeyListener, ActionListener {
 	public Board(String ip) {
 		frame = new BoardFrame(this);
 		snake = new Snake();
-		food = new Food(0, 0);
+		food = new Food(-100, -100);
+		blocks = putBorders();
 		setRandomLocation(food);
-		int i = (int) (Math.random() * 10 + 1);
-
-		for (int k = 0; k < i; k++) {
-			Block l = new Block(0, 0);
-			setRandomLocation(l);
-			blocks.add(l);
+		if(!controller){
+			snake.empty();
 		}
 
-		i = 1;// (int) (Math.random() * 10 + 1);
+		int i = 1;
 		for (int k = 0; k < i; k++) {
 			Gate l = new Gate(0, 0, 0);
 			setRandomLocation(l);
 			gates.add(l);
 		}
 		t.start();
-		if(!controller){
-			while(!snake.isEmpty()){
-				snake.remove(0);
-			}
-		}
+
 		try {
 			netWorker = new Networker(this, ip, PORT);
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			// TODO Auto-ge1nerated catch block
 			e.printStackTrace();
 		}
-		
+
 	}
 
 	/**
@@ -91,7 +86,7 @@ public class Board extends JPanel implements KeyListener, ActionListener {
 	 *            - the link to generate a random location
 	 */
 	private void setRandomLocation(Slot l) {
-		while (snake.isOn(l) != null) {
+		do {
 			int wc = (int) Math.floor(frame.getWidth() / Slot.X_AXIS_SIZE);
 			int hc = (int) Math.floor(frame.getHeight() / Slot.Y_AXIS_SIZE);
 			Random r = new Random();
@@ -99,7 +94,26 @@ public class Board extends JPanel implements KeyListener, ActionListener {
 			l.setX(w * Slot.X_AXIS_SIZE);
 			int h = r.nextInt(hc);
 			l.setY(h * Slot.Y_AXIS_SIZE);
+		} while (isOccupied(l));
+	}
+
+	private boolean isOccupied(Slot l) {
+		for (Block b : blocks) {
+			if (b.equals(l)) {
+				return true;
+			}
 		}
+		for (Gate g : gates) {
+			if (g.equals(l)) {
+				return true;
+			}
+		}
+		for (SnakeLink s : snake) {
+			if (s.equals(l)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
@@ -124,16 +138,18 @@ public class Board extends JPanel implements KeyListener, ActionListener {
 		}
 		// happens only if the size of the snake is not 0
 		System.out.println(snake.size());
-		try{
-		if (snake.size() != 0) {
-			Move thisMove = snake.get(0).cloneMoves().peek();
-			Move newMove = Move.getNeg(e.getKeyCode());
-			// if the player want to go against the direction the snake is going
-			if (thisMove == newMove) {
-				return;
+		try {
+			if (snake.size() != 0) {
+				Move thisMove = snake.get(0).cloneMoves().peek();
+				Move newMove = Move.getNeg(e.getKeyCode());
+				// if the player want to go against the direction the snake is
+				// going
+				if (thisMove == newMove) {
+					return;
+				}
 			}
-		}}catch(NullPointerException e1){
-			//e1.printStackTrace();
+		} catch (NullPointerException e1) {
+			// e1.printStackTrace();
 		}
 		// finally! the action
 		action(e.getKeyCode());
@@ -170,11 +186,11 @@ public class Board extends JPanel implements KeyListener, ActionListener {
 	 * needed will be done
 	 */
 	private void colide() {
-		if(justadded){
+		if (justadded) {
 			netWorker.sendMassege("ok");
 			justadded = false;
 			return;
-			
+
 		}
 		// check for eating
 		Collide f = snake.collided(food);
@@ -319,8 +335,27 @@ public class Board extends JPanel implements KeyListener, ActionListener {
 		new Board(JOptionPane.showInputDialog("enter ip"));
 	}
 
+	public List<Block> putBorders() {
+		Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+		int h = screen.height, w = screen.width;
+		int wCount = w / Slot.X_AXIS_SIZE + (w % Slot.X_AXIS_SIZE == 0 ? 0 : 1);
+		int hCount = h / Slot.Y_AXIS_SIZE + (h % Slot.Y_AXIS_SIZE == 0 ? 0 : 1);
+		ArrayList<Block> blocks = new ArrayList<Block>();
+		for (int i = 0; i < wCount; i++) {
+			blocks.add(new Block(i * Slot.X_AXIS_SIZE, 0));
+			blocks.add(new Block(i * Slot.X_AXIS_SIZE, (hCount - 2)
+					* Slot.Y_AXIS_SIZE));
+		}
+		for (int i = 1; i < hCount - 1; i++) {
+			blocks.add(new Block(0, i * Slot.Y_AXIS_SIZE));
+			blocks.add(new Block((wCount - 1) * Slot.Y_AXIS_SIZE, i
+					* Slot.Y_AXIS_SIZE));
+		}
+		return blocks;
+	}
+
 	public void start() {
 		controller = true;
-		
+
 	}
 }

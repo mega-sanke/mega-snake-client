@@ -21,10 +21,10 @@ public class Snake extends ArrayList<SnakeLink> {
 
 	public Snake() {
 		alive = true;
-		add(new SnakeLink(0,0, true));
+		add(new SnakeLink(Slot.X_AXIS_SIZE ,Slot.Y_AXIS_SIZE , true));
 	}
 	
-	public SnakeLink isOn(Slot l) {
+	public SnakeLink getSnakeLinkOn(Slot l) {
 		for (SnakeLink i : this) {
 			if (i.equals(l)) {
 				return i;
@@ -60,7 +60,7 @@ public class Snake extends ArrayList<SnakeLink> {
 	}
 	
 	public Collide collided(Slot l) {
-		Slot i = isOn(l);
+		Slot i = getSnakeLinkOn(l);
 		if(size() == 0){
 				return null;
 		}
@@ -98,6 +98,8 @@ public class Snake extends ArrayList<SnakeLink> {
 	private void setAlive(boolean alive) {
 		this.alive = alive;
 	}
+	
+	
 
 	public void kill() {
 		setAlive(false);
@@ -118,6 +120,13 @@ public class Snake extends ArrayList<SnakeLink> {
 	public static void lowerDelay(Timer t) {
 		setDelay(getDelay() - dt);
 		t.setDelay(getDelay());
+	}
+
+	public void empty() {
+		while(!isEmpty()){
+			remove(0);
+		}
+		
 	}
 
 	

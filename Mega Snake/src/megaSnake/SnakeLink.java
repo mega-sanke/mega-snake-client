@@ -1,5 +1,6 @@
 package megaSnake;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingDeque;
@@ -23,7 +24,14 @@ public class SnakeLink extends Slot {
 		this.head = head;
 		moves.add(Move.STAY);
 	}
-
+	
+	@Override
+	public void fillLink(Graphics g, Color c) {
+		// TODO Auto-generated method stub
+		super.fillLink(g, c);
+		System.out.println("{ " + x + ", " + y + "}");
+	}
+	
 	/**
 	 * copy only the position
 	 * 

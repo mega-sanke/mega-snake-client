@@ -10,14 +10,14 @@ public class BoardFrame extends JFrame {
 	
 	public BoardFrame(Board b){
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-		dim.setSize(dim.getWidth() / 2, dim.getHeight());
+		dim.setSize(dim.getWidth(), dim.getHeight());
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLocation(0, 0);
 		this.setSize(dim);
-		//this.setUndecorated(true);
-		//this.setBackground(new Color(0, 0, 0, 0));
-		//this.setExtendedState(JFrame.MAXIMIZED_BOTH);
-		//b.setOpaque(false);
+//		this.setUndecorated(true);
+//		this.setBackground(new Color(0, 0, 0, 0));
+//		this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+//		b.setOpaque(false);
 		
 		this.setVisible(true);
 		this.add(b);
