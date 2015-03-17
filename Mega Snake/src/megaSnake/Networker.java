@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -19,7 +20,8 @@ public class Networker implements Runnable {
 	private Thread thread = new Thread(this);
 	int id;
 	public static final String DEAD = "dead", OK = "ok", GATE = "gate",
-			START = "start", ID = "id", FIRST_CONNECT="firstConnect";
+			START = "start", ID = "id", FIRST_CONNECT = "firstConnect",
+			ADD_NEIGHBOR = "add neighbor";
 
 	public Networker(Board b, String ip, int port) throws UnknownHostException,
 			IOException {
@@ -37,7 +39,6 @@ public class Networker implements Runnable {
 	}
 
 	public void work(String massege) {
-		System.out.println(massege);
 		String[] p = massege.split(":");
 		switch (p[0]) {
 		case ID:
@@ -50,46 +51,49 @@ public class Networker implements Runnable {
 			break;
 		case GATE:
 			int c = Integer.parseInt(p[1]);
-			for (Gate g : board.gates) {
-				if (g.getCode() == c && Integer.parseInt(p[3]) != id) {
-					boolean head = false;
-					if (board.getSnake().isEmpty()) {
-						head = true;
-						board.justadded = true;
-						SnakeLink s = new SnakeLink(g.getX(), g.getY(), head);
-						s.addMove(Move.valueOf(p[2]));
-						s.move();
-						board.getSnake().add(s);
-					} else {
-						// SnakeLink h = board.getSnake().get(0);
-						// Queue<Move> q = new LinkedList<Move>(board.getSnake()
-						// .get(board.getSnake().size() - 1).moves);
-						// for (Move m : q) {
-						// s.moves.add(m);
-						// }
-						// SnakeLink h = board.getSnake().get(0);
-						// Queue<Move> q = new LinkedList<Move>(h.moves);
-						// SnakeLink l = new
-						// SnakeLink(board.getSnake().get(board.getSnake().size()-1));
-						// l.moves.add(Move.valueOf(p[2]));
-						// l.move();
-						// for (Move m : q) {
-						// l.moves.add(m);
-						// }
-						board.getSnake().addLink();
-					}
-
-					// s.move();
-					board.start();
+			for (Winds w : Winds.values()) {
+				if (board.gates.get(w) == null)
 					break;
+				for (Gate g : board.gates.get(w)) {
+					if (g.getCode() == c && Integer.parseInt(p[3]) != id) {
+						boolean head = false;
+						if (board.getSnake().isEmpty()) {
+							head = true;
+							board.justadded = true;
+							SnakeLink s = new SnakeLink(g.getX(), g.getY(),
+									head);
+							s.addMove(Move.valueOf(p[2]));
+							s.move();
+							board.getSnake().add(s);
+						} else {
+							board.getSnake().addLink();
+						}
+						board.start();
+						break;
 
+					}
 				}
 			}
 			break;
 		case START:
 			board.controller = true;
-			board.getSnake().add(new SnakeLink(Slot.X_AXIS_SIZE, Slot.Y_AXIS_SIZE, true));
-			System.out.println("con");
+			board.getSnake().add(
+					new SnakeLink(Slot.X_AXIS_SIZE, Slot.Y_AXIS_SIZE, true));
+			break;
+		case ADD_NEIGHBOR:
+			
+			Winds w = Winds.valueOf(p[1]).getNeg();
+			w.conquer();
+			board.gates.put(w, new ArrayList<Gate>());
+			ArrayList<Block> blocks = board.getBlocksOn(w);
+			int count = Integer.parseInt(p[3]),
+			startingID = Integer.parseInt(p[2]);
+			System.out.println("size " + blocks.size() + " count " + count);
+			for (int i = 0; i < count; i++) {
+				Block b = blocks.get(0);
+				blocks.remove(0);
+				board.gates.get(w).add(new Gate(b.x, b.y, startingID + i));
+			}
 			break;
 		}
 

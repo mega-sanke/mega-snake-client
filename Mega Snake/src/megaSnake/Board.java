@@ -5,7 +5,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -13,6 +12,7 @@ import java.awt.event.KeyListener;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Random;
 
@@ -38,8 +38,8 @@ public class Board extends JPanel implements KeyListener, ActionListener {
 	 */
 
 	private Timer t = new Timer(Snake.DELAY, this);
-	public List<Block> blocks = new ArrayList<Block>();
-	public List<Gate> gates = new ArrayList<Gate>();
+	public Hashtable<Winds, ArrayList<Block>> blocks = new Hashtable<>();
+	public Hashtable<Winds, ArrayList<Gate>> gates = new Hashtable<>();
 	public boolean justadded = false;
 	public static final int PORT = 4444;
 
@@ -55,15 +55,8 @@ public class Board extends JPanel implements KeyListener, ActionListener {
 		food = new Food(-100, -100);
 		blocks = putBorders();
 		setRandomLocation(food);
-		if(!controller){
+		if (!controller) {
 			snake.empty();
-		}
-
-		int i = 1;
-		for (int k = 0; k < i; k++) {
-			Gate l = new Gate(0, 0, 0);
-			setRandomLocation(l);
-			gates.add(l);
 		}
 		t.start();
 
@@ -98,14 +91,21 @@ public class Board extends JPanel implements KeyListener, ActionListener {
 	}
 
 	private boolean isOccupied(Slot l) {
-		for (Block b : blocks) {
-			if (b.equals(l)) {
-				return true;
+		for (Winds w : Winds.values()) {
+			for (Block b : blocks.get(w)) {
+				if (b.equals(l)) {
+					return true;
+				}
 			}
 		}
-		for (Gate g : gates) {
-			if (g.equals(l)) {
-				return true;
+		for (Winds w : Winds.values()) {
+			if (gates.get(w) == null) {
+				break;
+			}
+			for (Gate g : gates.get(w)) {
+				if (g.equals(l)) {
+					return true;
+				}
 			}
 		}
 		for (SnakeLink s : snake) {
@@ -137,7 +137,6 @@ public class Board extends JPanel implements KeyListener, ActionListener {
 			return;
 		}
 		// happens only if the size of the snake is not 0
-		System.out.println(snake.size());
 		try {
 			if (snake.size() != 0) {
 				Move thisMove = snake.get(0).cloneMoves().peek();
@@ -200,24 +199,31 @@ public class Board extends JPanel implements KeyListener, ActionListener {
 			return;
 		}
 		// go over the gates
-		for (Gate g : gates) {
-			Collide c = snake.collided(g);
-			if (c != null) {
-				netWorker.sendMassege("gate:" + g.getCode() + ":"
-						+ snake.get(0).cloneMoves().peek());
-				if (snake.get(0).isHead()) {
-					controller = false;
+		for (Winds w : Winds.values()) {
+			if (gates.get(w) == null) {
+				break;
+			}
+			for (Gate g : gates.get(w)) {
+				Collide c = snake.collided(g);
+				if (c != null) {
+					netWorker.sendMassege("gate:" + g.getCode() + ":"
+							+ snake.get(0).cloneMoves().peek());
+					if (snake.get(0).isHead()) {
+						controller = false;
+					}
+					snake.remove(0);
+					return;
 				}
-				snake.remove(0);
-				return;
 			}
 		}
 		// go over the blocks
-		for (Block g : blocks) {
-			Collide c = snake.collided(g);
-			if (c != null) {
-				netWorker.sendMassege("kill");
-				break;
+		for (Winds w : Winds.values()) {
+			for (Block g : blocks.get(w)) {
+				Collide c = snake.collided(g);
+				if (c != null) {
+					netWorker.sendMassege("kill");
+					break;
+				}
 			}
 		}
 		// over the snake
@@ -282,16 +288,19 @@ public class Board extends JPanel implements KeyListener, ActionListener {
 		super.paint(g);
 		g.clearRect(0, 0, getWidth(), getHeight());
 		drawGrid(g);
-		/*
-		 * if(!connection.isConrtroller()){ frame.setOpacity(0.7f); } else {
-		 * frame.setOpacity(1.0f); }
-		 */
-		for (Gate l : gates) {
-			l.fillLink(g, Color.RED);
+		for (Winds w : Winds.values()) {
+			if (gates.get(w) == null) {
+				break;
+			}
+			for (Gate l : gates.get(w)) {
+				l.fillLink(g, Color.RED);
+			}
 		}
 		Color a = new Color(150, 75, 0);
-		for (Block l : blocks) {
-			l.fillLink(g, a);
+		for (Winds w : Winds.values()) {
+			for (Block l : blocks.get(w)) {
+				l.fillLink(g, a);
+			}
 		}
 		for (SnakeLink i : snake) {
 			i.fillLink(g, Color.BLACK);
@@ -335,37 +344,46 @@ public class Board extends JPanel implements KeyListener, ActionListener {
 		new Board(JOptionPane.showInputDialog("enter ip"));
 	}
 
-	public List<Block> putBorders() {
+	public Hashtable<Winds, ArrayList<Block>> putBorders() {
 		Dimension screen = getBoardSize();
 		int h = screen.height, w = screen.width;
 		int wCount = w / Slot.X_AXIS_SIZE + (w % Slot.X_AXIS_SIZE == 0 ? 0 : 1);
 		int hCount = h / Slot.Y_AXIS_SIZE + (h % Slot.Y_AXIS_SIZE == 0 ? 0 : 1);
-		ArrayList<Block> blocks = new ArrayList<Block>();
+		Hashtable<Winds, ArrayList<Block>> blocks = new Hashtable<>();
+		for (Winds t : Winds.values()) {
+			blocks.put(t, new ArrayList<Block>());
+		}
 		for (int i = 0; i < wCount; i++) {
-			blocks.add(new Block(i * Slot.X_AXIS_SIZE, 0));
-			blocks.add(new Block(i * Slot.X_AXIS_SIZE, (hCount - 3)
-					* Slot.Y_AXIS_SIZE));
+			blocks.get(Winds.NORTH).add(new Block(i * Slot.X_AXIS_SIZE, 0));
+			blocks.get(Winds.SOUTH).add(
+					new Block(i * Slot.X_AXIS_SIZE, (hCount - 5)
+							* Slot.Y_AXIS_SIZE));
 		}
 		for (int i = 1; i < hCount - 1; i++) {
-			blocks.add(new Block(0, i * Slot.Y_AXIS_SIZE));
-			blocks.add(new Block((wCount - 1) * Slot.Y_AXIS_SIZE, i
-					* Slot.Y_AXIS_SIZE));
+			blocks.get(Winds.WEST).add(new Block(0, i * Slot.Y_AXIS_SIZE));
+			blocks.get(Winds.EAST).add(
+					new Block((wCount - 1) * Slot.Y_AXIS_SIZE, i
+							* Slot.Y_AXIS_SIZE));
 		}
 		return blocks;
 	}
-	
-	public void addGates(int gates, Winds w){
+
+	public void addGates(int gates, Winds w) {
 		w.conquer();
-		
+
 	}
-	
+
 	public void start() {
 		controller = true;
 
 	}
 
-	public Dimension getBoardSize(){
+	public Dimension getBoardSize() {
 		return frame.getSize();
 	}
-	
+
+	public ArrayList<Block> getBlocksOn(Winds w) {
+		return blocks.get(w);
+	}
+
 }

@@ -29,7 +29,6 @@ public class SnakeLink extends Slot {
 	public void fillLink(Graphics g, Color c) {
 		// TODO Auto-generated method stub
 		super.fillLink(g, c);
-		System.out.println("{ " + x + ", " + y + "}");
 	}
 	
 	/**
