@@ -13,6 +13,11 @@ public class Gate extends Slot{
 		return code;
 	}
 	
+	@Override
+	public String toString(){
+		return "Gate{code="+code+"}";
+	}
+	
 	
 
 }

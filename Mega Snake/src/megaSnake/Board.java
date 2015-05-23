@@ -201,7 +201,7 @@ public class Board extends JPanel implements KeyListener, ActionListener {
 		// go over the gates
 		for (Winds w : Winds.values()) {
 			if (gates.get(w) == null) {
-				break;
+				continue;
 			}
 			for (Gate g : gates.get(w)) {
 				Collide c = snake.collided(g);
@@ -218,6 +218,9 @@ public class Board extends JPanel implements KeyListener, ActionListener {
 		}
 		// go over the blocks
 		for (Winds w : Winds.values()) {
+			if (blocks.get(w) == null) {
+				continue;
+			}
 			for (Block g : blocks.get(w)) {
 				Collide c = snake.collided(g);
 				if (c != null) {
@@ -290,7 +293,7 @@ public class Board extends JPanel implements KeyListener, ActionListener {
 		drawGrid(g);
 		for (Winds w : Winds.values()) {
 			if (gates.get(w) == null) {
-				break;
+				continue;
 			}
 			for (Gate l : gates.get(w)) {
 				l.fillLink(g, Color.RED);
@@ -368,10 +371,6 @@ public class Board extends JPanel implements KeyListener, ActionListener {
 		return blocks;
 	}
 
-	public void addGates(int gates, Winds w) {
-		w.conquer();
-
-	}
 
 	public void start() {
 		controller = true;

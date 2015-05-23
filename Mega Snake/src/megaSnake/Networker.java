@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import javax.swing.JOptionPane;
+
 public class Networker implements Runnable {
 	private Socket socket;
 	public PrintWriter writer;
@@ -53,7 +55,7 @@ public class Networker implements Runnable {
 			int c = Integer.parseInt(p[1]);
 			for (Winds w : Winds.values()) {
 				if (board.gates.get(w) == null)
-					break;
+					continue;
 				for (Gate g : board.gates.get(w)) {
 					if (g.getCode() == c && Integer.parseInt(p[3]) != id) {
 						boolean head = false;
@@ -70,7 +72,6 @@ public class Networker implements Runnable {
 						}
 						board.start();
 						break;
-
 					}
 				}
 			}
@@ -88,12 +89,13 @@ public class Networker implements Runnable {
 			ArrayList<Block> blocks = board.getBlocksOn(w);
 			int count = Integer.parseInt(p[3]),
 			startingID = Integer.parseInt(p[2]);
-			System.out.println("size " + blocks.size() + " count " + count);
+			//System.out.println("size " + blocks.size() + " count " + count);
 			for (int i = 0; i < count; i++) {
 				Block b = blocks.get(0);
 				blocks.remove(0);
 				board.gates.get(w).add(new Gate(b.x, b.y, startingID + i));
 			}
+			System.out.println(board.gates);
 			break;
 		}
 
