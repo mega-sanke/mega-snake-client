@@ -15,7 +15,7 @@ public class Networker implements MessageListener {
 	ChatClient socket;
 
 	public static final String DEAD = "dead", OK = "ok", GATE = "gate", START = "start", ID = "id",
-			FIRST_CONNECT = "firstConnect", NEIGHBOR_ADD = "neighbor/add", NEIGHBOR_ADD_WIND = "neighbor/add/wind" ,GATE_ID = "gate/id",
+			FIRST_CONNECT = "firstConnect", NEIGHBOR_ADD = "neighbor/add", NEIGHBOR_ADD_WIND = "neighbor/add/wind", NEIGHBOR_ADD_COUNT = "neighbor/add/count" ,GATE_ID = "gate/id",
 			GATE_PLYER_ID = "gate/plyer/id", GATE_PREV_MOVE = "gate/prev/move";
 
 	public Networker(String ip, Board board) throws IOException {
