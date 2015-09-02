@@ -27,7 +27,7 @@ public class Board extends JPanel implements KeyListener, ActionListener {
 	private Snake snake;
 	private JFrame frame;
 	private Food food;
-	private Networker netWorker;
+	private Networker2 netWorker;
 	public boolean controller = false;
 	/**
 	 * the numbers of action that have been played and haven't been done.
@@ -61,7 +61,7 @@ public class Board extends JPanel implements KeyListener, ActionListener {
 		t.start();
 
 		try {
-			netWorker = new Networker(this, ip, PORT);
+			netWorker = new Networker2(this, ip, PORT);
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
