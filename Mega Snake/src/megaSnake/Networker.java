@@ -15,7 +15,8 @@ public class Networker implements MessageListener {
 	ChatClient socket;
 
 	public static final String DEAD = "dead", OK = "ok", GATE = "gate", START = "start", ID = "id",
-			FIRST_CONNECT = "firstConnect", NEIGHBOR_ADD = "neighbor/add", NEIGHBOR_ADD_WIND = "neighbor/add/wind", NEIGHBOR_ADD_COUNT = "neighbor/add/count" ,GATE_ID = "gate/id",
+			FIRST_CONNECT = "firstConnect", NEIGHBOR_ADD = "neighbor/add", NEIGHBOR_ADD_WIND = "neighbor/add/wind",
+			NEIGHBOR_ADD_COUNT = "neighbor/add/count", NEIGHBOR_ADD_SIZE = "neighbor/add/size", GATE_ID = "gate/id",
 			GATE_PLYER_ID = "gate/plyer/id", GATE_PREV_MOVE = "gate/prev/move";
 
 	public Networker(String ip, Board board) throws IOException {
@@ -67,13 +68,15 @@ public class Networker implements MessageListener {
 			board.controller = true;
 			board.getSnake().add(new SnakeLink(Slot.X_AXIS_SIZE, Slot.Y_AXIS_SIZE, true));
 		}
+		
 		if (message.getData(NEIGHBOR_ADD) != null) {
 			Winds w = Winds.valueOf(message.getData(NEIGHBOR_ADD_WIND)).getNeg();
 			w.conquer();
 			board.gates.put(w, new ArrayList<Gate>());
 			ArrayList<Block> blocks = board.getBlocksOn(w);
-			int count = Integer.parseInt(p[3]), startingID = Integer.parseInt(p[2]);
-//			 System.out.println("size " + blocks.size() + " count " + count);
+			int count = Integer.parseInt(message.getData(NEIGHBOR_ADD_COUNT)),
+					startingID = Integer.parseInt(NEIGHBOR_ADD_SIZE);
+			// System.out.println("size " + blocks.size() + " count " + count);
 			for (int i = 0; i < count; i++) {
 				Block b = blocks.get(0);
 				blocks.remove(0);
@@ -83,4 +86,8 @@ public class Networker implements MessageListener {
 		}
 	}
 
+	
+	public void send(Message m){
+		socket.send(m);
+	}
 }
