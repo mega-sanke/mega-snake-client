@@ -45,6 +45,8 @@ public class Networker implements MessageListener {
 		}
 		
 		if (message.getData(GATE) != null) {
+			
+			//TODO make the transfer more easy to understand
 			int c = Integer.parseInt(message.getData(GATE_ID));
 			for (Winds w : Winds.values()) {
 				if (board.gates.get(w) == null)

@@ -383,7 +383,6 @@ public class Board extends JPanel implements KeyListener, ActionListener {
 
 	public void start() {
 		controller = true;
-
 	}
 
 	public Dimension getBoardSize() {
