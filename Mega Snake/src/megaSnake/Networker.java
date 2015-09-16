@@ -7,6 +7,12 @@ import event.MessageEvent;
 import event.MessageListener;
 import tcp.message.Message;
 import tcp.messagesConection.ChatClient;
+import util.Block;
+import util.Gate;
+import util.Move;
+import util.Slot;
+import util.SnakeLink;
+import util.Winds;
 
 public class Networker implements MessageListener {
 
@@ -37,9 +43,7 @@ public class Networker implements MessageListener {
 		if (message.getData(DEAD) != null) {
 			board.getSnake().kill();
 		}
-		if (message.getData(OK) != null) {
-			// WTF?!?!
-		}
+		
 		if (message.getData(GATE) != null) {
 			int c = Integer.parseInt(message.getData(GATE_ID));
 			for (Winds w : Winds.values()) {
@@ -80,9 +84,12 @@ public class Networker implements MessageListener {
 			for (int i = 0; i < count; i++) {
 				Block b = blocks.get(0);
 				blocks.remove(0);
-				board.gates.get(w).add(new Gate(b.x, b.y, startingID + i));
+				board.gates.get(w).add(new Gate(b.getX(), b.getY(), startingID + i));
 			}
 			System.out.println(board.gates);
+		}
+		if (message.getData(OK) == null) {
+			throw new IllegalStateException("Got message from the Server with no contact");
 		}
 	}
 

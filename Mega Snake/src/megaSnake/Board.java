@@ -13,13 +13,22 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.List;
 import java.util.Random;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.Timer;
+
+import util.Block;
+import util.Collide;
+import util.Food;
+import util.Gate;
+import util.Move;
+import util.Slot;
+import util.Snake;
+import util.SnakeLink;
+import util.Winds;
 
 @SuppressWarnings("serial")
 public class Board extends JPanel implements KeyListener, ActionListener {

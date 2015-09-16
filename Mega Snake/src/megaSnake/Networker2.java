@@ -9,6 +9,13 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
+import util.Block;
+import util.Gate;
+import util.Move;
+import util.Slot;
+import util.SnakeLink;
+import util.Winds;
+
 
 public class Networker2 implements Runnable {
 	
@@ -91,7 +98,7 @@ public class Networker2 implements Runnable {
 			for (int i = 0; i < count; i++) {
 				Block b = blocks.get(0);
 				blocks.remove(0);
-				board.gates.get(w).add(new Gate(b.x, b.y, startingID + i));
+				board.gates.get(w).add(new Gate(b.getX(), b.getY(), startingID + i));
 			}
 			System.out.println(board.gates);
 			break;

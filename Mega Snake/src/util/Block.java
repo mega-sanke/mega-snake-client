@@ -1,5 +1,4 @@
-package megaSnake;
-
+package util;
 
 public class Block extends Slot {
 

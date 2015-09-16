@@ -1,4 +1,4 @@
-package megaSnake;
+package util;
 
 import java.awt.event.KeyEvent;
 

@@ -1,4 +1,4 @@
-package megaSnake;
+package util;
 
 /**
  * when the snake collides in a link (Gate, Block Food or Link from the snake)

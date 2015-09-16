@@ -1,4 +1,4 @@
-package megaSnake;
+package util;
 
 public class Gate extends Slot{
 	

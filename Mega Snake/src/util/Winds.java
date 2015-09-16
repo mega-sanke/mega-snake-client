@@ -1,9 +1,14 @@
-package megaSnake;
+package util;
 
 public enum Winds {
 	NORTH, EAST, SOUTH, WEST;
 	
-	boolean occupied;
+	private boolean occupied;
+	
+	
+	public boolean isFree(){
+		return occupied;
+	}
 	
 	public void conquer(){
 		occupied = true;
