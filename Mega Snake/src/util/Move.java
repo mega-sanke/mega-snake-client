@@ -15,6 +15,8 @@ public enum Move {
 	UP, DOWN, RIGHT, LEFT, STAY;
 
 	public static Move getNeg(Move v) {
+		if(v == null)
+			return null;
 		switch (v) {
 		case UP:
 			return DOWN;

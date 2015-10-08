@@ -1,5 +1,8 @@
 package util;
 
+import java.awt.Color;
+import java.awt.Graphics;
+
 public class Gate extends Slot{
 	
 	private final int code;
@@ -16,6 +19,11 @@ public class Gate extends Slot{
 	@Override
 	public String toString(){
 		return "Gate{code="+code+"}";
+	}
+	
+	public void fillLink(Graphics g,  int space, int x_size, int y_size) {
+		// TODO Auto-generated method stub
+		super.fillLink(g, Color.RED, space, x_size, y_size);
 	}
 	
 	

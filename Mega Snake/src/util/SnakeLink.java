@@ -24,37 +24,37 @@ public class SnakeLink extends Slot {
 		this.head = head;
 		moves.add(Move.STAY);
 	}
-	
-	@Override
-	public void fillLink(Graphics g, Color c) {
+
+	public void fillLink(Graphics g, int space, int x_size, int y_size) {
 		// TODO Auto-generated method stub
-		super.fillLink(g, c);
+		super.fillLink(g, Color.GREEN, space, x_size, y_size);
 	}
-	
+
 	/**
 	 * copy only the position
 	 * 
 	 * @param s
 	 */
-	public SnakeLink(SnakeLink s) {
+	public SnakeLink(Slot s) {
 		this(s.getX(), s.getY(), false);
 	}
-	
-	public void addMove(Move m){
+
+	public void addMove(Move m) {
 		moves.add(m);
 	}
-	
-	public int getMovesCount(){
+
+	public int getMovesCount() {
 		return moves.size();
 	}
-	
+
 	public boolean isHead() {
 		return head;
 	}
-	
-	public Queue<Move> cloneMoves(){
+
+	public Queue<Move> cloneMoves() {
 		return new LinkedBlockingDeque<>(moves);
 	}
+
 	public void move() {
 		lastMove = moves.poll();
 		if (lastMove == null) {
@@ -63,16 +63,16 @@ public class SnakeLink extends Slot {
 		switch (lastMove) {
 
 		case UP:
-			y -= Y_AXIS_SIZE;
+			position.translate(0, -1);
 			break;
 		case DOWN:
-			y += Y_AXIS_SIZE;
+			position.translate(0, 1);
 			break;
 		case LEFT:
-			x -= X_AXIS_SIZE;
+			position.translate(-1, 0);
 			break;
 		case RIGHT:
-			x += X_AXIS_SIZE;
+			position.translate(1, 0);
 			break;
 		case STAY:
 			break;
@@ -80,8 +80,23 @@ public class SnakeLink extends Slot {
 			break;
 		}
 	}
-	public Move getLastMove(){
-		return lastMove;
+
+	public Move getLastMove() {
+		return lastMove == null ? Move.STAY : lastMove;
 	}
 
+	public Point getNextPosition() {
+		switch (moves.peek()) {
+			case UP:
+				return new Point(getX(), getY() - 1);
+			case DOWN:
+				return new Point(getX(), getY() + 1);
+			case LEFT:
+				return new Point(getX() - 1, getY());
+			case RIGHT:
+				return new Point(getX() + 1, getY());
+			default:
+				return new Point(position);
+		}
+	}
 }

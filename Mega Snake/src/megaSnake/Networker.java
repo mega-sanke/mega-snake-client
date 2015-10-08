@@ -1,11 +1,16 @@
 package megaSnake;
 
 import java.io.IOException;
+import java.security.MessageDigestSpi;
 import java.util.ArrayList;
+
+import javax.annotation.Generated;
 
 import event.MessageEvent;
 import event.MessageListener;
 import tcp.message.Message;
+import tcp.message.Message.Target;
+import tcp.message.Message.Type;
 import tcp.messagesConection.ChatClient;
 import util.Block;
 import util.Gate;
@@ -16,16 +21,16 @@ import util.Winds;
 
 public class Networker implements MessageListener {
 
-	private Board board;
+	private Game board;
 	private int id;
 	ChatClient socket;
 
-	public static final String DEAD = "dead", OK = "ok", GATE = "gate", START = "start", ID = "id",
+	public static final String FOOD = "food", DEAD = "dead", OK = "ok", GATE = "gate", START = "start", ID = "id",
 			FIRST_CONNECT = "firstConnect", NEIGHBOR_ADD = "neighbor/add", NEIGHBOR_ADD_WIND = "neighbor/add/wind",
 			NEIGHBOR_ADD_COUNT = "neighbor/add/count", NEIGHBOR_ADD_SIZE = "neighbor/add/size", GATE_ID = "gate/id",
 			GATE_PLYER_ID = "gate/plyer/id", GATE_PREV_MOVE = "gate/prev/move";
 
-	public Networker(String ip, Board board) throws IOException {
+	public Networker(String ip, Game board) throws IOException {
 		this.board = board;
 		socket = new ChatClient(ip, true);
 		socket.addMessageListener(this);
@@ -41,7 +46,7 @@ public class Networker implements MessageListener {
 			id = Integer.parseInt(message.getData(ID));
 		}
 		if (message.getData(DEAD) != null) {
-			board.getSnake().kill();
+			board.kill();
 		}
 		
 		if (message.getData(GATE) != null) {
@@ -54,15 +59,14 @@ public class Networker implements MessageListener {
 				for (Gate g : board.gates.get(w)) {
 					if (g.getCode() == c && Integer.parseInt(message.getData(GATE_PLYER_ID)) != id) {
 						boolean head = false;
-						if (board.getSnake().isEmpty()) {
+						if (board.isEmpty()) {
 							head = true;
-							board.justadded = true;
 							SnakeLink s = new SnakeLink(g.getX(), g.getY(), head);
 							s.addMove(Move.valueOf(message.getData(GATE_PREV_MOVE)));
 							s.move();
-							board.getSnake().add(s);
+							board.addLink(s);
 						} else {
-							board.getSnake().addLink();
+							board.addLink();
 						}
 						board.start();
 						break;
@@ -71,8 +75,7 @@ public class Networker implements MessageListener {
 			}
 		}
 		if (message.getData(START) != null) {
-			board.controller = true;
-			board.getSnake().add(new SnakeLink(Slot.X_AXIS_SIZE, Slot.Y_AXIS_SIZE, true));
+			board.addLink(new SnakeLink(0, 0, true));
 		}
 		
 		if (message.getData(NEIGHBOR_ADD) != null) {
@@ -90,6 +93,9 @@ public class Networker implements MessageListener {
 			}
 			System.out.println(board.gates);
 		}
+		if(message.getData(FOOD) != null){
+			board.addLinkCount();
+		}
 		if (message.getData(OK) == null) {
 			throw new IllegalStateException("Got message from the Server with no contact");
 		}
@@ -98,5 +104,32 @@ public class Networker implements MessageListener {
 	
 	public void send(Message m){
 		socket.send(m);
+	}
+
+	public void gateSession(int gateId, Move lastMove) {
+		Message m = Message.create(Target.BROADCAST, Type.DATA);
+		m.putData(GATE, "");
+		m.putData(GATE_PLYER_ID, id + "");
+		m.putData(GATE_ID, gateId + "");
+		m.putData(GATE_PREV_MOVE, lastMove.toString());
+		send(m);
+		
+	}
+
+	public void blockSession() {
+		Message m = Message.create(Target.BROADCAST, Type.DATA);
+		m.putData(DEAD, "");
+		
+	}
+	
+	public void foodSession(){
+		Message m = Message.create(Target.BROADCAST, Type.DATA);
+		board.addLink();
+		m.putData(FOOD, "");
+	}
+	
+	public void snakeSession(){
+		Message m = Message.create(Target.BROADCAST, Type.DATA);
+		m.putData(DEAD, "");
 	}
 }
