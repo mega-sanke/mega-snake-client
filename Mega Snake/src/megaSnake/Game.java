@@ -25,29 +25,30 @@ public class Game implements KeyListener, ActionListener {
 
 	private Snake snake;
 	private Food food;
-	//private Networker networker;
+	private Networker networker;
 	private Slot[][] slots;
-	Frame frame;
+	private Frame frame;
 	private int moveCount = 1;
 	private int linkCount = 1;
-	Timer t;
+	private Timer t;
+	private boolean controller = false;
 
 	public Game(String ip, int i, int j) throws IOException {
 		snake = new Snake();
 		snake.add(new SnakeLink(1, 1, true));
 		snake.addMove(Move.STAY);
 		food = new Food(0, 0);
-		
+
 		slots = new Slot[i][j];
 		for (int p = 0; p < slots.length; p++) {
 			for (int k = 0; k < slots[p].length; k++) {
-				if(p == 0 || p == slots.length - 1 || k == 0 || k == slots[p].length - 1){
+				if (p == 0 || p == slots.length - 1 || k == 0 || k == slots[p].length - 1) {
 					slots[p][k] = new Block(p, k);
 				}
 			}
 		}
 		setRandomLocation(food, false);
-		// networker = new networker(ip, this);
+		networker = new Networker(ip, this);
 		frame = new Frame("Mega Snake", i, j, slots, this);
 		t = new Timer(500, this);
 		t.start();
@@ -55,7 +56,7 @@ public class Game implements KeyListener, ActionListener {
 	}
 
 	public void setRandomLocation(Slot s, boolean exists) {
-		if(exists)
+		if (exists)
 			slots[s.getX()][s.getY()] = null;
 		Random r = new Random();
 		int i = r.nextInt(slots.length);
@@ -91,33 +92,27 @@ public class Game implements KeyListener, ActionListener {
 			ys[i] = snake.get(i).getY();
 		}
 
-		
-
 		Point head = snake.get(0).getNextPosition();
 		Slot currentSlot = slots[head.getX()][head.getY()];
 		if (currentSlot != null && head.equals(currentSlot.getPosition())) {
-			
+
 			switch (slots[head.getX()][head.getY()].getClass().getSimpleName()) {
 			case "Gate":
 				Gate g = (Gate) slots[head.getX()][head.getY()];
-				//TODO networker.gateSession(g.getCode(), head.getLastMove());
+				networker.gateSession(g.getCode(), snake.get(0).getLastMove());
 				break;
 			case "Block":
-				//TODO networker.blockSession();
-				kill();
+				networker.blockSession();
 				break;
 			case "Food":
-				//TODO networker.foodSession();
-				addLink();
-				linkCount++;
+				networker.foodSession();
 				setRandomLocation(food, true);
 				break;
 			}
 		} else {
 			for (SnakeLink link : snake) {
 				if (link != snake.get(0) && link.getNextPosition().equals(head)) {
-					//TODO networker.snakeSession();
-					kill();
+					networker.snakeSession();
 				}
 			}
 
@@ -144,29 +139,28 @@ public class Game implements KeyListener, ActionListener {
 	}
 
 	public boolean addLink() {
-		if(t.getDelay() >= 20)
-			t.setDelay((int)(t.getDelay() / 1.2));
+		if (t.getDelay() >= 20)
+			t.setDelay((int) (t.getDelay() / 1.2));
 		return snake.addLink();
 	}
 
 	@Override
 	public void keyTyped(KeyEvent e) {
-		
+
 	}
-	
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		Move v = Move.valueOf(e.getKeyCode());
-		if (v != null && v != snake.get(0).getLastMove() && v != Move.getNeg(snake.get(0).getLastMove())) {
-			moveCount++;
-			snake.addMove(v);
-			//Debugger.println(v);
+		if (isController()) {
+			Move v = Move.valueOf(e.getKeyCode());
+			if (v != null && v != snake.get(0).getLastMove() && v != Move.getNeg(snake.get(0).getLastMove())) {
+				moveCount++;
+				snake.addMove(v);
 
+			}
 		}
-		
+
 	}
-	
 
 	@Override
 	public void keyReleased(KeyEvent e) {
@@ -174,7 +168,8 @@ public class Game implements KeyListener, ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		moveSnake();
+		if (isController())
+			moveSnake();
 		frame.update(isAlive(), getLinkCount());
 	}
 
@@ -185,6 +180,14 @@ public class Game implements KeyListener, ActionListener {
 
 	public int getLinkCount() {
 		return linkCount;
+	}
+
+	public boolean isController() {
+		return controller;
+	}
+
+	public void setController(boolean controller) {
+		this.controller = controller;
 	}
 
 	public static void main(String[] args) throws IOException {

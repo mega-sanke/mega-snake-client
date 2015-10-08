@@ -48,52 +48,70 @@ public class Networker implements MessageListener {
 		if (message.getData(DEAD) != null) {
 			board.kill();
 		}
-		
+
 		if (message.getData(GATE) != null) {
-			
-			//TODO make the transfer more easy to understand
+
+			// TODO make the transfer more easy to understand
 			int c = Integer.parseInt(message.getData(GATE_ID));
-			for (Winds w : Winds.values()) {
-				if (board.gates.get(w) == null)
-					continue;
-				for (Gate g : board.gates.get(w)) {
-					if (g.getCode() == c && Integer.parseInt(message.getData(GATE_PLYER_ID)) != id) {
-						boolean head = false;
-						if (board.isEmpty()) {
-							head = true;
-							SnakeLink s = new SnakeLink(g.getX(), g.getY(), head);
-							s.addMove(Move.valueOf(message.getData(GATE_PREV_MOVE)));
-							s.move();
-							board.addLink(s);
-						} else {
-							board.addLink();
+
+			for (Slot[] slots : board.getSlots()) {
+				for (Slot slot : slots) {
+					if (slot != null && slot instanceof Gate) {
+						Gate g = (Gate) slot;
+						if (g.getCode() == c && Integer.parseInt(message.getData(GATE_PLYER_ID)) != id) {
+							boolean head = false;
+							if (board.isEmpty()) {
+								head = true;
+								SnakeLink s = new SnakeLink(g.getX(), g.getY(), head);
+								s.addMove(Move.valueOf(message.getData(GATE_PREV_MOVE)));
+								s.move();
+								board.addLink(s);
+							} else {
+								board.addLink();
+							}
+							board.setController(true);
+							break;
 						}
-						board.start();
-						break;
 					}
 				}
 			}
+
 		}
 		if (message.getData(START) != null) {
 			board.addLink(new SnakeLink(0, 0, true));
 		}
-		
+
 		if (message.getData(NEIGHBOR_ADD) != null) {
 			Winds w = Winds.valueOf(message.getData(NEIGHBOR_ADD_WIND)).getNeg();
 			w.conquer();
-			board.gates.put(w, new ArrayList<Gate>());
-			ArrayList<Block> blocks = board.getBlocksOn(w);
 			int count = Integer.parseInt(message.getData(NEIGHBOR_ADD_COUNT)),
 					startingID = Integer.parseInt(NEIGHBOR_ADD_SIZE);
-			// System.out.println("size " + blocks.size() + " count " + count);
 			for (int i = 0; i < count; i++) {
-				Block b = blocks.get(0);
-				blocks.remove(0);
-				board.gates.get(w).add(new Gate(b.getX(), b.getY(), startingID + i));
+				int x = 0, y = 0;
+				switch (w) {
+				case EAST:
+					x = board.getSlots().length;
+					y = i;
+					break;
+				case NORTH:
+					y = 0;
+					x = i;
+					break;
+				case SOUTH:
+					y = board.getSlots()[0].length;
+					x = i;
+					break;
+				case WEST:
+					x = 0;
+					y = i;
+					break;
+
+				}
+				Gate g = new Gate(x, y, startingID + i);
+				board.getSlots()[x][y] = g;
 			}
-			System.out.println(board.gates);
 		}
-		if(message.getData(FOOD) != null){
+		if (message.getData(FOOD) != null) {
 			board.addLinkCount();
 		}
 		if (message.getData(OK) == null) {
@@ -101,34 +119,34 @@ public class Networker implements MessageListener {
 		}
 	}
 
-	
-	public void send(Message m){
+	public void send(Message m) {
 		socket.send(m);
 	}
 
 	public void gateSession(int gateId, Move lastMove) {
+		board.setController(false);
 		Message m = Message.create(Target.BROADCAST, Type.DATA);
 		m.putData(GATE, "");
 		m.putData(GATE_PLYER_ID, id + "");
 		m.putData(GATE_ID, gateId + "");
 		m.putData(GATE_PREV_MOVE, lastMove.toString());
 		send(m);
-		
+
 	}
 
 	public void blockSession() {
 		Message m = Message.create(Target.BROADCAST, Type.DATA);
 		m.putData(DEAD, "");
-		
+
 	}
-	
-	public void foodSession(){
+
+	public void foodSession() {
 		Message m = Message.create(Target.BROADCAST, Type.DATA);
 		board.addLink();
 		m.putData(FOOD, "");
 	}
-	
-	public void snakeSession(){
+
+	public void snakeSession() {
 		Message m = Message.create(Target.BROADCAST, Type.DATA);
 		m.putData(DEAD, "");
 	}
