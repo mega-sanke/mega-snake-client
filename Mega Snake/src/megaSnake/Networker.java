@@ -13,6 +13,7 @@ import tcp.message.Message.Target;
 import tcp.message.Message.Type;
 import tcp.messagesConection.ChatClient;
 import util.Block;
+import util.Debugger;
 import util.Gate;
 import util.Move;
 import util.Slot;
@@ -26,19 +27,25 @@ public class Networker implements MessageListener {
 	ChatClient socket;
 
 	public static final String FOOD = "food", DEAD = "dead", OK = "ok", GATE = "gate", START = "start", ID = "id",
-			FIRST_CONNECT = "firstConnect", NEIGHBOR_ADD = "neighbor/add", NEIGHBOR_ADD_WIND = "neighbor/add/wind",
-			NEIGHBOR_ADD_COUNT = "neighbor/add/count", NEIGHBOR_ADD_SIZE = "neighbor/add/size", GATE_ID = "gate/id",
-			GATE_PLYER_ID = "gate/plyer/id", GATE_PREV_MOVE = "gate/prev/move";
+			FIRST_CONNECT = "first", WIDTH = "first/width", HEIGHT = "first/height", NEIGHBOR_ADD = "neighbor/add",
+			NEIGHBOR_ADD_WIND = "neighbor/add/wind", NEIGHBOR_ADD_COUNT = "neighbor/add/count",
+			NEIGHBOR_ADD_SIZE = "neighbor/add/size", GATE_ID = "gate/id", GATE_PLYER_ID = "gate/plyer/id",
+			GATE_PREV_MOVE = "gate/prev/move";
 
 	public Networker(String ip, Game board) throws IOException {
 		this.board = board;
 		socket = new ChatClient(ip, true);
 		socket.addMessageListener(this);
+		startSession();
 
 	}
 
+	
+
 	@Override
 	public void onReceive(MessageEvent e) {
+		
+		Debugger.println("receive!!!!");
 
 		Message message = e.getMessage();
 
@@ -78,6 +85,7 @@ public class Networker implements MessageListener {
 
 		}
 		if (message.getData(START) != null) {
+			
 			board.addLink(new SnakeLink(0, 0, true));
 		}
 
@@ -114,13 +122,19 @@ public class Networker implements MessageListener {
 		if (message.getData(FOOD) != null) {
 			board.addLinkCount();
 		}
-		if (message.getData(OK) == null) {
-			throw new IllegalStateException("Got message from the Server with no contact");
-		}
 	}
 
 	public void send(Message m) {
 		socket.send(m);
+	}
+	
+	private void startSession() {
+		Message m = Message.create(Target.friend(""), Type.DATA);
+		m.putData(FIRST_CONNECT, "");
+		m.putData(HEIGHT, board.getSlots()[0].length + "");
+		m.putData(WIDTH, board.getSlots().length + "");
+		
+		
 	}
 
 	public void gateSession(int gateId, Move lastMove) {
