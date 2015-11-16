@@ -5,6 +5,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Queue;
 import java.util.Random;
 
 import javax.swing.Timer;
@@ -12,7 +14,6 @@ import javax.swing.Timer;
 import gui.Board;
 import gui.Frame;
 import util.Block;
-import util.Debugger;
 import util.Food;
 import util.Gate;
 import util.Move;
@@ -28,14 +29,15 @@ public class Game implements KeyListener, ActionListener {
 	private Networker networker;
 	private Slot[][] slots;
 	private Frame frame;
-	private int moveCount = 1;
+	private int moveCount = 0;
 	private int linkCount = 1;
 	private Timer t;
 	private boolean controller = false;
+	private boolean transgerGate = false;
+	int i = 0;
 
 	public Game(String ip, int i, int j) throws IOException {
 		snake = new Snake();
-		snake.add(new SnakeLink(1, 1, true));
 		snake.addMove(Move.STAY);
 		food = new Food(0, 0);
 
@@ -62,8 +64,8 @@ public class Game implements KeyListener, ActionListener {
 		int i = r.nextInt(slots.length);
 		int j = r.nextInt(slots[0].length);
 		while (slots[i][j] != null || snake.getLinkOn(i, j) != null) {
-			i = r.nextInt(slots[0].length);
-			j = r.nextInt(slots.length);
+			i = r.nextInt(slots.length);
+			j = r.nextInt(slots[0].length);
 		}
 		s.setX(i);
 		s.setY(j);
@@ -79,29 +81,30 @@ public class Game implements KeyListener, ActionListener {
 	}
 
 	public void moveSnake() {
+
 		if (moveCount == 0) {
-			snake.addMove(snake.get(0).cloneMoves().peek());
+			Queue<Move> moves = snake.get(0).cloneMoves();
+			snake.addMove(moves.poll());
+
 		} else {
 			moveCount--;
+			moveCount = Math.max(0, moveCount);
 		}
 
-		int[] xs = new int[snake.size()];
-		int[] ys = new int[snake.size()];
-		for (int i = 0; i < snake.size(); i++) {
-			xs[i] = snake.get(i).getX();
-			ys[i] = snake.get(i).getY();
-		}
-
+		boolean flag = true;
+		boolean gate = false;
 		Point head = snake.get(0).getNextPosition();
-		Slot currentSlot = slots[head.getX()][head.getY()];
-		if (currentSlot != null && head.equals(currentSlot.getPosition())) {
-
+		if (slots[head.getX()][head.getY()] != null) {
 			switch (slots[head.getX()][head.getY()].getClass().getSimpleName()) {
 			case "Gate":
+				gate = true;
+				setTransgerGate(true);
+				System.out.println("gate!! " + (i++));
 				Gate g = (Gate) slots[head.getX()][head.getY()];
 				networker.gateSession(g.getCode(), snake.get(0).getLastMove());
 				break;
 			case "Block":
+				flag = false;
 				networker.blockSession();
 				break;
 			case "Food":
@@ -109,19 +112,45 @@ public class Game implements KeyListener, ActionListener {
 				setRandomLocation(food, true);
 				break;
 			}
-		} else {
-			for (SnakeLink link : snake) {
-				if (link != snake.get(0) && link.getNextPosition().equals(head)) {
-					networker.snakeSession();
+		}
+
+		for (SnakeLink link : snake) {
+			if (link != snake.get(0) && link.getNextPosition().equals(head)) {
+				flag = false;
+				networker.snakeSession();
+				break;
+			}
+		}
+		if (flag) {
+			if (gate)
+				snake.remove(0);
+
+			int[] xs = new int[snake.size()];
+			int[] ys = new int[snake.size()];
+			for (int i = 0; i < snake.size(); i++) {
+				xs[i] = snake.get(i).getX();
+				ys[i] = snake.get(i).getY();
+			}
+			snake.move();
+			for (int i = 0; i < xs.length; i++) {
+				slots[xs[i]][ys[i]] = null;
+				SnakeLink link = snake.get(i);
+				slots[link.getX()][link.getY()] = link;
+			}
+		}
+		if (isEmpty()) {
+			clear();
+			setTransgerGate(false);
+		}
+	}
+
+	private void clear() {
+		for (int i = 0; i < slots.length; i++) {
+			for (int j = 0; j < slots[i].length; j++) {
+				if (slots[i][j] instanceof SnakeLink) {
+					slots[i][j] = null;
 				}
 			}
-
-		}
-		snake.move();
-		for (int i = 0; i < xs.length; i++) {
-			slots[xs[i]][ys[i]] = null;
-			SnakeLink link = snake.get(i);
-			slots[link.getX()][link.getY()] = link;
 		}
 
 	}
@@ -168,9 +197,16 @@ public class Game implements KeyListener, ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (isController())
+		if (isController() || isTransgeringGate())
 			moveSnake();
 		frame.update(isAlive(), getLinkCount());
+	}
+
+	public void applaySnake() {
+		for (SnakeLink link : snake) {
+			slots[link.getX()][link.getY()] = link;
+		}
+
 	}
 
 	public void addLinkCount() {
@@ -190,9 +226,25 @@ public class Game implements KeyListener, ActionListener {
 		this.controller = controller;
 	}
 
+	public boolean isTransgeringGate() {
+		return transgerGate;
+	}
+
+	public void setTransgerGate(boolean transgerGate) {
+		this.transgerGate = transgerGate;
+	}
+
 	public static void main(String[] args) throws IOException {
-		Debugger.setMode(true);
-		new Game("127.0.0.1", 20, 40);
+		new Game("127.0.0.1", 30, 30);
+	}
+
+	public Snake getSnake() {
+		return snake;
+	}
+
+	public void updateGraphics() {
+		frame.update(isAlive(), getLinkCount());
+
 	}
 
 }

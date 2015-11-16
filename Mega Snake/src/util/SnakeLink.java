@@ -86,7 +86,11 @@ public class SnakeLink extends Slot {
 	}
 
 	public Point getNextPosition() {
-		switch (moves.peek()) {
+		Move move = moves.peek();
+		if(move == null){
+			return new Point(position);
+		}
+		switch (move) {
 			case UP:
 				return new Point(getX(), getY() - 1);
 			case DOWN:

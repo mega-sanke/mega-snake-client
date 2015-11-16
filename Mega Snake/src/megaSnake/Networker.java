@@ -11,9 +11,9 @@ import event.MessageListener;
 import tcp.message.Message;
 import tcp.message.Message.Target;
 import tcp.message.Message.Type;
+import tcp.message.Protocols;
 import tcp.messagesConection.ChatClient;
 import util.Block;
-import util.Debugger;
 import util.Gate;
 import util.Move;
 import util.Slot;
@@ -40,15 +40,9 @@ public class Networker implements MessageListener {
 
 	}
 
-	
-
 	@Override
 	public void onReceive(MessageEvent e) {
-		
-		Debugger.println("receive!!!!");
-
 		Message message = e.getMessage();
-
 		if (message.getData(ID) != null) {
 			id = Integer.parseInt(message.getData(ID));
 		}
@@ -57,10 +51,7 @@ public class Networker implements MessageListener {
 		}
 
 		if (message.getData(GATE) != null) {
-
-			// TODO make the transfer more easy to understand
 			int c = Integer.parseInt(message.getData(GATE_ID));
-
 			for (Slot[] slots : board.getSlots()) {
 				for (Slot slot : slots) {
 					if (slot != null && slot instanceof Gate) {
@@ -69,7 +60,24 @@ public class Networker implements MessageListener {
 							boolean head = false;
 							if (board.isEmpty()) {
 								head = true;
-								SnakeLink s = new SnakeLink(g.getX(), g.getY(), head);
+								Move move = Move.valueOf(message.getData(GATE_PREV_MOVE));
+								int dx, dy;
+								dx = dy = 0;
+								switch (move) {
+									case DOWN:
+										dy = 1;
+										break;
+									case UP:
+										dy = -1;
+										break;
+									case LEFT:
+										dx = -1;
+										break;
+									case RIGHT:
+										dx = 1;
+										break;
+								}
+								SnakeLink s = new SnakeLink(g.getX() + dx, g.getY() + dy, head);
 								s.addMove(Move.valueOf(message.getData(GATE_PREV_MOVE)));
 								s.move();
 								board.addLink(s);
@@ -77,6 +85,8 @@ public class Networker implements MessageListener {
 								board.addLink();
 							}
 							board.setController(true);
+							board.updateGraphics();
+							System.out.println(board.getSnake());
 							break;
 						}
 					}
@@ -85,20 +95,23 @@ public class Networker implements MessageListener {
 
 		}
 		if (message.getData(START) != null) {
-			
-			board.addLink(new SnakeLink(0, 0, true));
+			board.addLink(new SnakeLink(1, 1, true));
+			board.applaySnake();
+			board.setController(true);
 		}
 
 		if (message.getData(NEIGHBOR_ADD) != null) {
+
 			Winds w = Winds.valueOf(message.getData(NEIGHBOR_ADD_WIND)).getNeg();
 			w.conquer();
 			int count = Integer.parseInt(message.getData(NEIGHBOR_ADD_COUNT)),
-					startingID = Integer.parseInt(NEIGHBOR_ADD_SIZE);
+					startingID = Integer.parseInt(message.getData(NEIGHBOR_ADD_SIZE));
+
 			for (int i = 0; i < count; i++) {
 				int x = 0, y = 0;
 				switch (w) {
 				case EAST:
-					x = board.getSlots().length;
+					x = board.getSlots().length - 1;
 					y = i;
 					break;
 				case NORTH:
@@ -106,7 +119,7 @@ public class Networker implements MessageListener {
 					x = i;
 					break;
 				case SOUTH:
-					y = board.getSlots()[0].length;
+					y = board.getSlots()[0].length - 1;
 					x = i;
 					break;
 				case WEST:
@@ -127,14 +140,14 @@ public class Networker implements MessageListener {
 	public void send(Message m) {
 		socket.send(m);
 	}
-	
+
 	private void startSession() {
 		Message m = Message.create(Target.friend(""), Type.DATA);
 		m.putData(FIRST_CONNECT, "");
 		m.putData(HEIGHT, board.getSlots()[0].length + "");
 		m.putData(WIDTH, board.getSlots().length + "");
-		
-		
+		send(m);
+
 	}
 
 	public void gateSession(int gateId, Move lastMove) {
@@ -151,6 +164,7 @@ public class Networker implements MessageListener {
 	public void blockSession() {
 		Message m = Message.create(Target.BROADCAST, Type.DATA);
 		m.putData(DEAD, "");
+		send(m);
 
 	}
 
@@ -158,10 +172,12 @@ public class Networker implements MessageListener {
 		Message m = Message.create(Target.BROADCAST, Type.DATA);
 		board.addLink();
 		m.putData(FOOD, "");
+		send(m);
 	}
 
 	public void snakeSession() {
 		Message m = Message.create(Target.BROADCAST, Type.DATA);
 		m.putData(DEAD, "");
+		send(m);
 	}
 }

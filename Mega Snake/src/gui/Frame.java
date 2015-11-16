@@ -2,6 +2,7 @@ package gui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.KeyListener;
 
@@ -25,6 +26,7 @@ public class Frame extends JFrame{
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLocation(0, 0);
 		setSize(dim);
+		//setLayout(null);
 		
 		//status
 		status = new StatusPanel(i * X_AXIS_SIZE, 50);
@@ -33,9 +35,12 @@ public class Frame extends JFrame{
 		board = new Board(i, j, slots, SPACE, X_AXIS_SIZE, Y_AXIS_SIZE);
 		addKeyListener(key);
 		
+		
+		
 		//adds
 		add(status, BorderLayout.NORTH);
 		add(board);
+		
 		
 		
 		setVisible(true);

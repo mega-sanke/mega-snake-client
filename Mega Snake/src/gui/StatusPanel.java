@@ -22,6 +22,8 @@ public class StatusPanel extends JPanel{
 		aliveLable.setFont(f);
 		aliveLable.setHorizontalAlignment(JLabel.CENTER);
 		aliveLable.setForeground(Color.MAGENTA);
+		add(aliveLable);
+		add(lengthLable);
 	}
 	
 	

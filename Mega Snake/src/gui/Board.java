@@ -10,13 +10,13 @@ import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.LayoutManager;
 import java.awt.Toolkit;
+import java.util.DuplicateFormatFlagsException;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import megaSnake.Game;
-import util.Debugger;
 import util.Food;
 import util.Slot;
 
@@ -36,7 +36,7 @@ public class Board extends JPanel {
 	}
 
 	@Override
-	public void paint(Graphics g) {
+	protected void paintComponent(Graphics g) {
 		// TODO Auto-generated method stub
 		super.paintComponent(g);
 		
@@ -47,6 +47,8 @@ public class Board extends JPanel {
 			for (Slot s : slots) {
 
 				if (s != null) {
+					
+						
 					s.fillLink(g, SPACE, X_AXIS_SIZE, Y_AXIS_SIZE);
 
 				}
@@ -55,6 +57,17 @@ public class Board extends JPanel {
 	}
 	
 	public  void update(){
+//		for (Slot[] slots : slots) {
+//			for (Slot s : slots) {
+//
+//				if (s != null && s.getClass().getSimpleName().equals("Gate")) {
+//					
+//						
+//					
+//
+//				}
+//			}
+//		}
 		repaint();
 	}
 
