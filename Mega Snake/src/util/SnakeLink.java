@@ -17,6 +17,7 @@ public class SnakeLink extends Slot {
 	 */
 	private volatile  Queue<Move> moves = new LinkedBlockingDeque<>();
 	private Move lastMove;
+	private Move lastPlanedMove;
 	private final boolean head;
 
 	public SnakeLink(int x, int y, boolean head) {
@@ -41,6 +42,7 @@ public class SnakeLink extends Slot {
 
 	public void addMove(Move m) {
 		moves.add(m);
+		setLastPlanedMove(m);
 	}
 
 	public int getMovesCount() {
@@ -83,6 +85,16 @@ public class SnakeLink extends Slot {
 
 	public Move getLastMove() {
 		return lastMove == null ? Move.STAY : lastMove;
+	}
+	
+	
+
+	private void setLastPlanedMove(Move lastPlanedMove) {
+		this.lastPlanedMove = lastPlanedMove;
+	}
+
+	public Move getLastPlanedMove() {
+		return lastPlanedMove;
 	}
 
 	public Point getNextPosition() {

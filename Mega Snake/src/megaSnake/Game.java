@@ -182,7 +182,7 @@ public class Game implements KeyListener, ActionListener {
 		if (isController()) {
 			Move v = Move.valueOf(e.getKeyCode());
 			System.out.print(v + " ");
-			if (v != null && v != snake.get(0).getLastMove() && v != Move.getNeg(snake.get(0).getLastMove())) {
+			if (v != null && v != snake.get(0).getLastPlanedMove() && v != Move.getNeg(snake.get(0).getLastPlanedMove())) {
 				moveCount++;
 				snake.addMove(v);
 				System.out.print("turned ");
@@ -212,7 +212,6 @@ public class Game implements KeyListener, ActionListener {
 
 	public void addLinkCount() {
 		linkCount++;
-
 	}
 
 	public int getLinkCount() {
