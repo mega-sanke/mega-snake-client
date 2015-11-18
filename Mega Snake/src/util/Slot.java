@@ -2,8 +2,6 @@ package util;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.lang.reflect.GenericArrayType;
-import java.util.ArrayList;
 
 /**
  * A slot in the game board

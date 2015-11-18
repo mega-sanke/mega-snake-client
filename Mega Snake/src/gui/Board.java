@@ -1,25 +1,13 @@
 package gui;
 
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.GridLayout;
-import java.awt.LayoutManager;
-import java.awt.Toolkit;
-import java.util.DuplicateFormatFlagsException;
 
-import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import megaSnake.Game;
-import util.Food;
 import util.Slot;
 
+@SuppressWarnings("serial")
 public class Board extends JPanel {
 	private Slot[][] slots;
 	

@@ -1,19 +1,13 @@
 package megaSnake;
 
 import java.io.IOException;
-import java.security.MessageDigestSpi;
-import java.util.ArrayList;
-
-import javax.annotation.Generated;
 
 import event.MessageEvent;
 import event.MessageListener;
 import tcp.message.Message;
 import tcp.message.Message.Target;
 import tcp.message.Message.Type;
-import tcp.message.Protocols;
 import tcp.messagesConection.ChatClient;
-import util.Block;
 import util.Gate;
 import util.Move;
 import util.Slot;
@@ -76,6 +70,8 @@ public class Networker implements MessageListener {
 									case RIGHT:
 										dx = 1;
 										break;
+								case STAY:
+									break;
 								}
 								SnakeLink s = new SnakeLink(g.getX() + dx, g.getY() + dy, head);
 								s.addMove(Move.valueOf(message.getData(GATE_PREV_MOVE)));

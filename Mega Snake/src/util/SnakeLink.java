@@ -15,7 +15,7 @@ public class SnakeLink extends Slot {
 	/**
 	 * a queue of the link
 	 */
-	private Queue<Move> moves = new LinkedBlockingDeque<>();
+	private volatile  Queue<Move> moves = new LinkedBlockingDeque<>();
 	private Move lastMove;
 	private final boolean head;
 

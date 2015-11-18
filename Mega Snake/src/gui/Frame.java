@@ -2,7 +2,6 @@ package gui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.KeyListener;
 
@@ -10,6 +9,7 @@ import javax.swing.JFrame;
 
 import util.Slot;
 
+@SuppressWarnings("serial")
 public class Frame extends JFrame{
 	
 	public static final int X_AXIS_SIZE = 20, Y_AXIS_SIZE = 20, SPACE = 2;

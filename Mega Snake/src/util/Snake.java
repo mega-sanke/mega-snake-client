@@ -1,14 +1,12 @@
 package util;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Queue;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.Timer;
 
 @SuppressWarnings("serial")
-public class Snake extends ArrayList<SnakeLink> {
+public class Snake extends CopyOnWriteArrayList<SnakeLink> {
 	/*
 	 * TODO: 1. Organize the code 2. Make it work
 	 */

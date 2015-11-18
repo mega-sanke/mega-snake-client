@@ -5,13 +5,11 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Queue;
 import java.util.Random;
 
 import javax.swing.Timer;
 
-import gui.Board;
 import gui.Frame;
 import util.Block;
 import util.Food;
@@ -180,15 +178,18 @@ public class Game implements KeyListener, ActionListener {
 
 	@Override
 	public void keyPressed(KeyEvent e) {
+		System.out.print("start ");
 		if (isController()) {
 			Move v = Move.valueOf(e.getKeyCode());
+			System.out.print(v + " ");
 			if (v != null && v != snake.get(0).getLastMove() && v != Move.getNeg(snake.get(0).getLastMove())) {
 				moveCount++;
 				snake.addMove(v);
-
+				System.out.print("turned ");
 			}
+			System.out.print(snake.get(0).cloneMoves());
 		}
-
+		System.out.println(" end");
 	}
 
 	@Override

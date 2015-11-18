@@ -7,6 +7,7 @@ import java.awt.GridLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+@SuppressWarnings("serial")
 public class StatusPanel extends JPanel{
 	JLabel aliveLable, lengthLable;
 	
