@@ -4,9 +4,11 @@ import java.io.IOException;
 
 import event.MessageEvent;
 import event.MessageListener;
+import protocol.Protocol;
 import tcp.message.Message;
 import tcp.message.Message.Target;
 import tcp.message.Message.Type;
+import tcp.message.Protocols;
 import tcp.messagesConection.ChatClient;
 import util.Gate;
 import util.Move;
@@ -134,6 +136,7 @@ public class Networker implements MessageListener {
 	}
 
 	public void send(Message m) {
+		System.out.println(Protocols.getMessageDeliveryProtocol().encode(m));
 		socket.send(m);
 	}
 
