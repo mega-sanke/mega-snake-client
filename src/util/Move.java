@@ -1,6 +1,7 @@
 package util;
 
 import java.awt.event.KeyEvent;
+import java.util.Optional;
 
 /**
  * there is three kinds of movement: up, down, right, left and stay (not to
@@ -12,7 +13,38 @@ import java.awt.event.KeyEvent;
 public enum Move {
 
 	// TODO: add some functions
-	UP, DOWN, RIGHT, LEFT, STAY;
+	UP {
+		@Override
+		public Move getNegative() {
+			return DOWN;
+		}
+	},
+	DOWN {
+		@Override
+		public Move getNegative() {
+			return UP;
+		}
+	},
+	RIGHT {
+		@Override
+		public Move getNegative() {
+			return LEFT;
+		}
+	},
+	LEFT {
+		@Override
+		public Move getNegative() {
+			return RIGHT;
+		}
+	},
+	STAY {
+		@Override
+		public Move getNegative() {
+			return STAY;
+		}
+	};
+
+	public abstract Move getNegative();
 
 	public static Move getNeg(Move v) {
 		if(v == null)
