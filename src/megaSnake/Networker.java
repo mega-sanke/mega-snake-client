@@ -28,6 +28,15 @@ public class Networker implements NotificationListener {
 
     }
 
+    private void startSession() {
+        execute("test-user", 8,8);
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void onReceive(NotificationEvent e) {
         Notify n = e.getNotification();
@@ -64,6 +73,9 @@ public class Networker implements NotificationListener {
     }
 
     private Point[] getSlots(String key) {
+        if(!values.containsKey(key)){
+            return new Point[0];
+        }
         String s = values.get(key).replaceAll(" ", "").substring(2);
         s = s.substring(0, s.length() - 2);
 
@@ -110,8 +122,4 @@ public class Networker implements NotificationListener {
         send(new Command(name, p));
     }
 
-    private void startSession() {
-        Command cmd = new Command("sign");
-        send(cmd);
-    }
 }
