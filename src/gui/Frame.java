@@ -44,7 +44,7 @@ public class Frame extends JFrame {
         validate();
     }
 
-    public void update(Point[] snake, Point[] gates, Optional<Point> food, boolean alive, int linkCount) {
+    public void update(Point[] snake, Point[] gates, Point[] food, boolean alive, int linkCount) {
         status.update(alive, linkCount);
         board.update(snake, gates, food);
     }

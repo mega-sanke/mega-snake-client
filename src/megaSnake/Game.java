@@ -16,7 +16,7 @@ public class Game implements KeyListener, ActionListener {
     private Timer t;
 
     public Game(String ip, int i, int j) throws IOException {
-        networker = new Networker(ip, this);
+        networker = new Networker(ip, i, j, this);
         frame = new Frame("Mega Snake", i, j, this);
         t = new Timer(500, this);
         t.start();
@@ -28,7 +28,7 @@ public class Game implements KeyListener, ActionListener {
     }
 
     public boolean isAlive() {
-        return networker.getBoolean("alive");
+        return networker.getBoolean("alive", false);
     }
 
     @Override
@@ -38,8 +38,8 @@ public class Game implements KeyListener, ActionListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        System.out.print("start");
         if (isController()) {
+            System.out.println('g');
             char move = '-';
             switch (e.getKeyCode()) {
                 case KeyEvent.VK_DOWN:
@@ -57,7 +57,6 @@ public class Game implements KeyListener, ActionListener {
             }
             networker.execute("mv-snake", move);
         }
-        System.out.println("end");
     }
 
     @Override
@@ -70,11 +69,11 @@ public class Game implements KeyListener, ActionListener {
     }
 
     public int getLinkCount() {
-        return networker.getInt("link-count");
+        return networker.getInt("link-count", 0);
     }
 
     public boolean isController() {
-        return networker.getBoolean("controller");
+        return networker.getBoolean("controller", false);
     }
 
 }

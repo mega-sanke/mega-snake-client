@@ -11,8 +11,7 @@ public class Board extends JPanel {
 
     private final int SPACE, X_AXIS_SIZE, Y_AXIS_SIZE;
     private final int HEIGHT, LENGTH;
-    private Point[] snakes, gates;
-    private Optional<Point> food = Optional.empty();
+    private Point[] snakes, gates, food;
 
     public Board(int heigth, int length, int space, int xAxis, int yAxis) {
         SPACE = space;
@@ -22,6 +21,7 @@ public class Board extends JPanel {
         LENGTH = length;
         snakes = new Point[0];
         gates = new Point[0];
+        food = new Point[0];
 
 
     }
@@ -42,14 +42,14 @@ public class Board extends JPanel {
             fillGate(g, p);
         }
 
-        food.ifPresent(food -> {
-            fillFood(g, food);
-        });
+        for (Point p : food) {
+            fillFood(g, p);
+        }
 
 
     }
 
-    public void update(Point[] snakes, Point[] gates, Optional<Point> food) {
+    public void update(Point[] snakes, Point[] gates, Point[] food) {
         this.snakes = snakes;
         this.gates = gates;
         this.food = food;
