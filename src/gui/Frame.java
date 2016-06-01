@@ -3,9 +3,13 @@ package gui;
 import util.Point;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionListener;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyListener;
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
 
 @SuppressWarnings("serial")
 public class Frame extends JFrame {
@@ -14,9 +18,18 @@ public class Frame extends JFrame {
 
     StatusPanel status;
     Board board;
+    MegaSnakeMenuBar menuBar;
 
-    public Frame(String title, int i, int j, KeyListener key) {
+    Vector<String> rooms_name;
+
+
+    public Frame(String title, int i, int j, KeyListener key, ListSelectionListener roomSelectionListener, ActionListener roomCreationListener) {
         super(title);
+
+        rooms_name = new Vector<>();
+        menuBar = new MegaSnakeMenuBar(rooms_name, roomSelectionListener,roomCreationListener);
+        setJMenuBar(menuBar);
+
 
 
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
@@ -44,8 +57,10 @@ public class Frame extends JFrame {
         validate();
     }
 
-    public void update(Point[] snake, Point[] gates, Point[] food, boolean alive, int linkCount) {
+    public void update(Point[] snake, Point[] gates, Point[] food, boolean alive, int linkCount, Vector<String> rooms) {
         status.update(alive, linkCount);
         board.update(snake, gates, food);
+        rooms_name.clear();
+        rooms_name.addAll(rooms);
     }
 }
