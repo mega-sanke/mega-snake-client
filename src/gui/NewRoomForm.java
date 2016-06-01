@@ -22,10 +22,12 @@ public class NewRoomForm extends javax.swing.JFrame {
     /**
      * Creates new form NewRoomForm
      */
-    public NewRoomForm(Vector<String> rooms, Networker networker) {
+    public NewRoomForm(Vector<String> rooms, Networker networker, JFrame frame) {
+
         this.rooms = rooms;
         this.networker = networker;
         initComponents();
+        setLocationRelativeTo(frame);
     }
 
     /**
@@ -137,7 +139,7 @@ public class NewRoomForm extends javax.swing.JFrame {
         String name = room_name_field.getText();
         String password = room_password_field.getText();
         if(rooms.contains(name)){
-            JOptionPane.showMessageDialog(null, String.format("The name \'%s\' is taken", name));
+            JOptionPane.showMessageDialog(this, String.format("The name \'%s\' is taken", name));
         } else {
             networker.execute("create-room", name, password);
         }

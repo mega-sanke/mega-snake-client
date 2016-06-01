@@ -76,7 +76,7 @@ public class Game implements KeyListener, ActionListener, ListSelectionListener 
                 frame.update(getSnake(), getGates(), getFood(), isAlive(), getLinkCount(), getRooms());
                 break;
             case "create-room":
-                new NewRoomForm(getRooms(), networker).setVisible(true);
+                new NewRoomForm(getRooms(), networker, frame).setVisible(true);
         }
     }
 
