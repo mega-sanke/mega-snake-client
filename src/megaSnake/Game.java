@@ -77,6 +77,7 @@ public class Game implements KeyListener, ActionListener, ListSelectionListener 
                 break;
             case "create-room":
                 new NewRoomForm(getRooms(), networker, frame).setVisible(true);
+                break;
         }
     }
 

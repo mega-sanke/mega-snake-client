@@ -35,7 +35,7 @@ public class Main {
 
     public Main(){
         try {
-            new Game("127.0.0.1", 30, 30);
+            new Game("172.19.100.214", 30, 30);
         }catch (IOException e){
             e.printStackTrace();
         }

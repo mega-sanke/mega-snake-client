@@ -7,6 +7,7 @@ import tcp.message.Notify;
 import tcp.messagesConection.Client;
 import util.Point;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -47,7 +48,7 @@ public class Networker implements NotificationListener {
         Notify n = e.getNotification();
         switch (n.type) {
             case ERROR:
-                System.err.println(n.content[0]);
+                JOptionPane.showMessageDialog(null, n.content[0]);
                 break;
             case MESSAGE:
                 System.out.println(n.content[0]);
