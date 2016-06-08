@@ -108,6 +108,7 @@ public class Networker implements NotificationListener {
                     case "floats":
                         floats.put(n.content[0], Double.parseDouble(n.content[1]));
                     case "room":
+                        System.out.println(n.content[0] + ' ' + n.content[1]);
                         boolean b = Boolean.parseBoolean(n.content[1]);
                         if (b) {
                             rooms.add(n.content[0]);
