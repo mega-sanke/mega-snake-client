@@ -5,7 +5,7 @@ package util;
  * A point representing a location in {@code (x,y)} coordinate space,
  * specified in integer precision.
  *
- * @author      Sami Shaio
+ * @author      Barak Ohana
  * @since       1.0
  */
 public class Point {

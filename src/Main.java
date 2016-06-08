@@ -4,10 +4,20 @@
 
 import megaSnake.*;
 
+import javax.swing.*;
 import java.io.IOException;
 
+/**
+ * This Class is the Main class - the one that needed to run.
+ *
+ * @author      Barak Ohana
+ */
 public class Main {
 
+    /**
+     * The main method.
+     * @param args
+     */
     public static void main(String[] args) {
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
@@ -33,9 +43,16 @@ public class Main {
         });
     }
 
+    /**
+     * The method that going to run when the program is executed.
+     */
     public Main(){
+        String ip = "10.0.0.15";//JOptionPane.showInputDialog(null, "enter ip");
+        if(ip.equals("")){
+            ip = "localhost";
+        }
         try {
-            new Game("172.19.100.214", 30, 30);
+            new Game(ip, 30, 30);
         }catch (IOException e){
             e.printStackTrace();
         }

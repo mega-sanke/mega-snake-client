@@ -7,6 +7,8 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -23,7 +25,7 @@ public class Frame extends JFrame {
     Vector<String> rooms_name;
 
 
-    public Frame(String title, int i, int j, KeyListener key, ListSelectionListener roomSelectionListener, ActionListener roomCreationListener) {
+    public Frame(String title, int i, int j, KeyListener key, ListSelectionListener roomSelectionListener, ActionListener roomCreationListener, WindowListener windowListener) {
         super(title);
 
         rooms_name = new Vector<>();
@@ -45,6 +47,7 @@ public class Frame extends JFrame {
         //board
         board = new Board(i, j, SPACE, X_AXIS_SIZE, Y_AXIS_SIZE);
         addKeyListener(key);
+        addWindowListener(windowListener);
 
 
         //adds
@@ -57,6 +60,17 @@ public class Frame extends JFrame {
         validate();
     }
 
+    /**
+     *
+     * The function updates the frame with fresh information.
+
+     * @param snake - the user's slots.
+     * @param gates - the users's gates.
+     * @param food - the user's food slots.
+     * @param alive - is the snake alive or dead.
+     * @param linkCount - the total size of the snake.
+     * @param rooms - list of all game rooms.
+     */
     public void update(Point[] snake, Point[] gates, Point[] food, boolean alive, int linkCount, Vector<String> rooms) {
         status.update(alive, linkCount);
         board.update(snake, gates, food);

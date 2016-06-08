@@ -4,15 +4,57 @@ import util.Point;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Optional;
 
 @SuppressWarnings("serial")
 public class Board extends JPanel {
 
-    private final int SPACE, X_AXIS_SIZE, Y_AXIS_SIZE;
-    private final int HEIGHT, LENGTH;
-    private Point[] snakes, gates, food;
+    /**
+     * Size of the space between slots.
+     */
+    private final int SPACE;
 
+    /**
+     * The vertical size of slot.
+     */
+    private final int X_AXIS_SIZE;
+
+    /**
+     * The horizontal size of slot.
+     */
+    private final int Y_AXIS_SIZE;
+
+    /**
+     * The height (is slots) of the user's board.
+     */
+    private final int HEIGHT;
+
+    /**
+     * The length (is slots) of the user's board.
+     */
+    private final int LENGTH;
+
+    /**
+     * The user's snake's links.
+     */
+    private Point[] snakes;
+    /**
+     * The user's gates (only slots).
+     */
+    private Point[] gates;
+
+    /**
+     * The user's food slots.
+     */
+    private Point[] food;
+
+    /**
+     * Constructor - construct the Board.
+     * @param heigth - The height (is slots) of the user's board.
+     * @param length - The length (is slots) of the user's board.
+     * @param space - Size of the space between slots.
+     * @param xAxis - The vertical size of slot.
+     * @param yAxis - The horizontal size of slot.
+     */
     public Board(int heigth, int length, int space, int xAxis, int yAxis) {
         SPACE = space;
         X_AXIS_SIZE = xAxis;
@@ -27,6 +69,9 @@ public class Board extends JPanel {
     }
 
     @Override
+    /**
+     * The function paints the current state of the game on the panel.
+     */
     protected void paintComponent(Graphics g) {
         // TODO Auto-generated method stub
         super.paintComponent(g);
@@ -49,6 +94,12 @@ public class Board extends JPanel {
 
     }
 
+    /**
+     * The function updates the board.
+     * @param snakes - the current snakes's slots.
+     * @param gates - the current gates.
+     * @param food - the current food.
+     */
     public void update(Point[] snakes, Point[] gates, Point[] food) {
         this.snakes = snakes;
         this.gates = gates;
@@ -56,6 +107,12 @@ public class Board extends JPanel {
         repaint();
     }
 
+    /**
+     * The function fill a Slot
+     * @param g - the Graphics object, for painting.
+     * @param c - the color to fill with.
+     * @param p - the slot (Point object) to fill.
+     */
     public void fillSlot(Graphics g, Color c, Point p) {
         Color cur = g.getColor();
         g.setColor(c);
@@ -63,19 +120,39 @@ public class Board extends JPanel {
         g.setColor(cur);
     }
 
+    /**
+     * The function fill snake slot.
+     * @param g - the Graphics object, for painting.
+     * @param point - the slot (Point object) to fill.
+     */
     public void fillSnake(Graphics g, Point point) {
         // TODO Auto-generated method stub
         this.fillSlot(g, Color.GREEN, point);
     }
 
+    /**
+     * The function fill gate slot.
+     * @param g - the Graphics object, for painting.
+     * @param p - the slot (Point object) to fill.
+     */
     public void fillGate(Graphics g, Point p) {
         this.fillSlot(g, Color.RED, p);
     }
 
+
+    /**
+     * The function fill snake slot.
+     * @param g - the Graphics object, for painting.
+     * @param p - the slot (Point object) to fill.
+     */
     public void fillFood(Graphics g, Point p) {
         this.fillSlot(g, Color.BLUE, p);
     }
 
+    /**
+     * the function fill the board grid.
+     * @param g - the Graphics object, for painting.
+     */
     private void fillGrid(Graphics g) {
         for (int i = 1; i < LENGTH; i++) {
             g.drawLine(i * X_AXIS_SIZE, 0, i * X_AXIS_SIZE, HEIGHT * X_AXIS_SIZE);
