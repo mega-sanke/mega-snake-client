@@ -24,9 +24,9 @@ public class Frame extends JFrame {
 
 
 
-    public Frame(String title, int i, int j, KeyListener key, ActionListener roomCreationListener, WindowListener windowListener, ActionListener joinRoomListener) {
+    public Frame(String title, int i, int j, KeyListener key, ActionListener roomCreationListener, WindowListener windowListener, ActionListener joinRoomListener, ActionListener restartActionListener, ActionListener exitActionListener) {
         super(title);
-        menuBar = new MegaSnakeMenuBar(roomCreationListener, joinRoomListener);
+        menuBar = new MegaSnakeMenuBar(roomCreationListener, joinRoomListener, restartActionListener, exitActionListener);
         setJMenuBar(menuBar);
 
 

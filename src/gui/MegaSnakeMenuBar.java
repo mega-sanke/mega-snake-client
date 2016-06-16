@@ -24,15 +24,37 @@ public class MegaSnakeMenuBar extends JMenuBar {
      */
     JMenuItem create_room;
 
+    JMenu game_menu;
+
+    JMenuItem exit;
+
+    JMenuItem restart;
+
 
     /**
      * Constructor - construct the menuBar.
      * @param roomCreationListener - the action listener for the new room button.
      */
-    public MegaSnakeMenuBar(ActionListener roomCreationListener, ActionListener joinRoomListener){
+    public MegaSnakeMenuBar(ActionListener roomCreationListener, ActionListener joinRoomListener, ActionListener restartActionListener, ActionListener exitActionListener){
+
+        game_menu = new JMenu("game");
+        exit = new JMenuItem("exit");
+        exit.addActionListener(exitActionListener);
+        exit.setActionCommand("exit");
+        game_menu.add(exit);
+
+
+
+        restart = new JMenuItem("restart");
+        restart.addActionListener(restartActionListener);
+        restart.setActionCommand("restart");
+        game_menu.add(restart);
+
+        add(game_menu);
 
         rooms_menu = new JMenu("Rooms");
         this.add(rooms_menu);
+
 
         joinRoom = new JMenuItem("Join Room");
         joinRoom.setActionCommand("join-room");

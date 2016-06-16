@@ -21,6 +21,8 @@ public class Game implements KeyListener, ActionListener, WindowListener {
      * The networking component.
      */
     private Networker networker;
+
+    private JoinRoomForm joinRoomFrame;
     /**
      * The graphic component.
      */
@@ -53,7 +55,7 @@ public class Game implements KeyListener, ActionListener, WindowListener {
      * Starts the gmae.
      */
     public void start() {
-        frame = new Frame("Mega Snake", X, Y, this, this, this, this);
+        frame = new Frame("Mega Snake", X, Y, this, this, this, this, this, this);
         t = new Timer(10, this);
         t.setActionCommand("timer");
         t.start();
@@ -114,8 +116,17 @@ public class Game implements KeyListener, ActionListener, WindowListener {
                 new NewRoomForm(getRooms(), networker, frame).setVisible(true);
                 break;
             case "join-room":
+                if (getJoinRoomFrame() == null) {
+                    joinRoomFrame = new JoinRoomForm(getRooms(), this.frame, networker);
+                    joinRoomFrame.setVisible(true);
+                }
 
-                new JoinRoomForm(getRooms(), networker).setVisible(true);
+            case "exit":
+                frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+                networker.endSession();
+                break;
+            case "restart":
+                networker.execute("restart");
                 break;
         }
     }
@@ -178,6 +189,14 @@ public class Game implements KeyListener, ActionListener, WindowListener {
 
     public Frame getFrame() {
         return frame;
+    }
+
+    public JoinRoomForm getJoinRoomFrame() {
+        return joinRoomFrame;
+    }
+
+    public void setJoinRoomFrame(JoinRoomForm joinRoomFrame) {
+        this.joinRoomFrame = joinRoomFrame;
     }
 
     /**

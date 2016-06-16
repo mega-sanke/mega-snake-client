@@ -47,10 +47,10 @@ public class Main {
      * The method that going to run when the program is executed.
      */
     public Main(){
-        String ip = JOptionPane.showInputDialog(null, "enter ip");
+        String ip = "localhost";//JOptionPane.showInputDialog(null, "enter ip");
         try {
-            new Game(ip, 30, 30);
-        }catch (IOException e){
+            new Game(ip, 15, 15);
+        } catch (IOException e){
             e.printStackTrace();
         }
     }

@@ -20,9 +20,10 @@ public class JoinRoomForm extends javax.swing.JFrame {
     /**
      * Creates new form JoinRoomForm
      */
-    public JoinRoomForm(Vector<String> rooms, Networker networker) {
+    public JoinRoomForm(Vector<String> rooms,JFrame frame, Networker networker) {
         initComponents();
         this.networker = networker;
+        setLocationRelativeTo(frame);
         join_room_list.setModel(new AbstractListModel<String>() {
             @Override
             public int getSize() {
@@ -34,6 +35,11 @@ public class JoinRoomForm extends javax.swing.JFrame {
                 return rooms.get(index);
             }
         });
+    }
+
+    public void close(){
+        setVisible(false);
+        dispose();
     }
 
     /**

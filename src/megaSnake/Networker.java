@@ -28,7 +28,7 @@ public class Networker implements NotificationListener {
     /**
      * The game object. Handel the game logistics, link communicate with the user.
      */
-    private Game board;
+    private Game game;
 
     /**
      * Hashtable that contain all the server's variables that doesn't have specific type.
@@ -62,11 +62,11 @@ public class Networker implements NotificationListener {
      * @param username - the user's name.
      * @param x - the width of the user's game board.
      * @param y - the height of the user's game board.
-     * @param board - the game object.
+     * @param game - the game object.
      * @throws IOException
      */
-    public Networker(String ip, String username, int x, int y, Game board) throws IOException {
-        this.board = board;
+    public Networker(String ip, String username, int x, int y, Game game) throws IOException {
+        this.game = game;
         socket = new Client(ip, true);
         socket.addNotificationListener(this);
         this.values = new Hashtable<>();
@@ -88,11 +88,22 @@ public class Networker implements NotificationListener {
                 break;
             case MESSAGE:
                 System.out.println(n.content[0]);
-                if(n.content[0].equals("exit")){
-                    board.getFrame().setVisible(false);
-                    board.getFrame().dispose();
-                } else if(n.content[0].equals("start")){
-                    board.start();
+                switch (n.content[0]){
+                    case "exit":
+                        game.getFrame().setVisible(false);
+                        game.getFrame().dispose();
+                        System.exit(0);
+                        break;
+                    case "start":
+                        game.start();
+                        break;
+                    case "joined":
+                        if (game.getJoinRoomFrame() != null) {
+                            game.getJoinRoomFrame().close();
+                        }
+                        break;
+
+
                 }
                 break;
             case VALUE:
