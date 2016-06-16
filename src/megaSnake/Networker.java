@@ -91,6 +91,8 @@ public class Networker implements NotificationListener {
                 if(n.content[0].equals("exit")){
                     board.getFrame().setVisible(false);
                     board.getFrame().dispose();
+                } else if(n.content[0].equals("start")){
+                    board.start();
                 }
                 break;
             case VALUE:
@@ -124,6 +126,7 @@ public class Networker implements NotificationListener {
         }
 
     }
+
 
     /**
      * The function return a string variable.

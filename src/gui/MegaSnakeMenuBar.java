@@ -18,37 +18,26 @@ public class MegaSnakeMenuBar extends JMenuBar {
     /**
      * the join room sub-menu.
      */
-    JMenu joinRoom;
+    JMenuItem joinRoom;
     /**
      * The join room item.
      */
     JMenuItem create_room;
-    /**
-     * the graphics game rooms list.
-     */
-    JList<String> rooms_list;
+
 
     /**
      * Constructor - construct the menuBar.
-     * @param rooms_name - the vector of the game rooms.
-     * @param roomSelectionListener - the selection listener for the rooms JList.
      * @param roomCreationListener - the action listener for the new room button.
      */
-    public MegaSnakeMenuBar(Vector<String> rooms_name, ListSelectionListener roomSelectionListener, ActionListener roomCreationListener){
+    public MegaSnakeMenuBar(ActionListener roomCreationListener, ActionListener joinRoomListener){
 
         rooms_menu = new JMenu("Rooms");
         this.add(rooms_menu);
 
-        joinRoom = new JMenu("Join Room");
+        joinRoom = new JMenuItem("Join Room");
+        joinRoom.setActionCommand("join-room");
+        joinRoom.addActionListener(joinRoomListener);
         rooms_menu.add(joinRoom);
-
-        rooms_list = new JList<>(rooms_name);
-        joinRoom.add(rooms_list);
-        rooms_list.addListSelectionListener(roomSelectionListener);
-        rooms_list.setVisibleRowCount(-1);
-        rooms_list.setFixedCellWidth(100);
-        DefaultListCellRenderer renderer = (DefaultListCellRenderer) rooms_list.getCellRenderer();
-        renderer.setHorizontalAlignment(SwingConstants.CENTER);
 
         create_room = new JMenuItem("Create Room");
         create_room.setActionCommand("create-room");

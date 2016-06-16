@@ -1,21 +1,21 @@
 package megaSnake;
 
 import gui.Frame;
+import gui.JoinRoomForm;
 import gui.NewRoomForm;
 import util.Point;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import java.awt.event.*;
 import java.io.IOException;
 import java.util.Vector;
 
 /**
  * The Game class is a class for all (there is not many of it, for the client) game logistics.
+ *
  * @author obama
  */
-public class Game implements KeyListener, ActionListener, ListSelectionListener, WindowListener {
+public class Game implements KeyListener, ActionListener, WindowListener {
 
     /**
      * The networking component.
@@ -30,21 +30,33 @@ public class Game implements KeyListener, ActionListener, ListSelectionListener,
      */
     private Timer t;
 
+    private int X, Y;
+
     /**
      * Constructor - construct new Game object.
+     *
      * @param ip - the server's ip.
-     * @param i - the width of the user's game board.
-     * @param j - the height of the user's game board.
+     * @param i  - the width of the user's game board.
+     * @param j  - the height of the user's game board.
      * @throws IOException
      */
     public Game(String ip, int i, int j) throws IOException {
         String s = JOptionPane.showInputDialog("Enter username!");
+        X = i;
+        Y = j;
         networker = new Networker(ip, s, i, j, this);
-        frame = new Frame("Mega Snake", i, j, this, this, this, this);
+
+
+    }
+
+    /**
+     * Starts the gmae.
+     */
+    public void start() {
+        frame = new Frame("Mega Snake", X, Y, this, this, this, this);
         t = new Timer(10, this);
         t.setActionCommand("timer");
         t.start();
-
     }
 
     //Start of KeyListener
@@ -59,6 +71,7 @@ public class Game implements KeyListener, ActionListener, ListSelectionListener,
      * The function that get the user actions, and send it to the server.
      */
     public void keyPressed(KeyEvent e) {
+        System.out.println(isController());
         if (isController()) {
             char move = '-';
             switch (e.getKeyCode()) {
@@ -75,6 +88,7 @@ public class Game implements KeyListener, ActionListener, ListSelectionListener,
                     move = 'E';
                     break;
             }
+            System.out.println(move);
             networker.execute("mv-snake", move);
         }
     }
@@ -99,27 +113,16 @@ public class Game implements KeyListener, ActionListener, ListSelectionListener,
             case "create-room":
                 new NewRoomForm(getRooms(), networker, frame).setVisible(true);
                 break;
-        }
-    }
+            case "join-room":
 
-    /**
-     * This is the function of joining rooms list.
-     * It joins the user to new room.
-     *
-     * @param e
-     */
-    @Override
-    public void valueChanged(ListSelectionEvent e) {
-        JList list = JList.class.cast(e.getSource());
-        String room_name = networker.getRooms().get(list.getSelectedIndex());
-        String password = JOptionPane.showInputDialog(null, String.format("Enter password for room \'%s\'", room_name));
-        networker.execute("join-room", room_name, password);
+                new JoinRoomForm(getRooms(), networker).setVisible(true);
+                break;
+        }
     }
 
     //Start of getters
 
     /**
-     *
      * @return the total size of the snake.
      */
     public int getLinkCount() {
@@ -127,7 +130,6 @@ public class Game implements KeyListener, ActionListener, ListSelectionListener,
     }
 
     /**
-     *
      * @return if the user is the controller of the snake.
      */
     public boolean isController() {
@@ -135,7 +137,6 @@ public class Game implements KeyListener, ActionListener, ListSelectionListener,
     }
 
     /**
-     *
      * @return is the snake is alive.
      */
     public boolean isAlive() {
@@ -150,7 +151,6 @@ public class Game implements KeyListener, ActionListener, ListSelectionListener,
     }
 
     /**
-     *
      * @return an array of the user's snake slots.
      */
     public Point[] getSnake() {
@@ -160,7 +160,6 @@ public class Game implements KeyListener, ActionListener, ListSelectionListener,
     }
 
     /**
-     *
      * @return an array of the user's gates.
      */
     public Point[] getGates() {
@@ -170,7 +169,6 @@ public class Game implements KeyListener, ActionListener, ListSelectionListener,
     }
 
     /**
-     *
      * @return an array of the user's food slots.
      */
     public Point[] getFood() {
@@ -178,7 +176,7 @@ public class Game implements KeyListener, ActionListener, ListSelectionListener,
         return networker.getSlots("food");
     }
 
-    public Frame getFrame(){
+    public Frame getFrame() {
         return frame;
     }
 
