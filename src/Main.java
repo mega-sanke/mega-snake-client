@@ -47,7 +47,7 @@ public class Main {
      * The method that going to run when the program is executed.
      */
     public Main(){
-        String ip = "127.0.0.1";//JOptionPane.showInputDialog(null, "enter ip");
+        String ip = "192.168.1.110";//JOptionPane.showInputDialog(null, "enter ip");
         if(ip.equals("")){
             ip = "localhost";
         }
