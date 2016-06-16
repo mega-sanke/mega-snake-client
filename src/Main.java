@@ -47,10 +47,7 @@ public class Main {
      * The method that going to run when the program is executed.
      */
     public Main(){
-        String ip = "25.106.207.198";//JOptionPane.showInputDialog(null, "enter ip");
-        if(ip.equals("")){
-            ip = "localhost";
-        }
+        String ip = JOptionPane.showInputDialog(null, "enter ip");
         try {
             new Game(ip, 30, 30);
         }catch (IOException e){
