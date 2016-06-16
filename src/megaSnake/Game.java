@@ -120,6 +120,7 @@ public class Game implements KeyListener, ActionListener, WindowListener {
                     joinRoomFrame = new JoinRoomForm(getRooms(), this.frame, networker);
                     joinRoomFrame.setVisible(true);
                 }
+                break;
 
             case "exit":
                 frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
